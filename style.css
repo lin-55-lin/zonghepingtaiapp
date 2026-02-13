@@ -1,0 +1,1246 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+    color: white;
+    position: relative;
+}
+
+.contact-info {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    left: auto;
+    background: transparent;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    color: #000;
+    backdrop-filter: blur(10px);
+    box-shadow: none;
+    z-index: 10;
+    text-align: right;
+}
+
+.contact-info span {
+    color: #000;
+}
+
+.contact-info a {
+    color: #000;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.contact-info a:hover {
+    color: #ff7b00;
+    text-decoration: underline;
+}
+
+.header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+    color: #000;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.header h1.editing {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 5px 15px;
+    outline: 2px solid #4CAF50;
+}
+
+.edit-title-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 1rem;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.edit-title-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.header p {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.category-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.tab-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.tab-btn.active {
+    background: rgba(255, 255, 255, 0.9);
+    color: #667eea;
+    font-weight: bold;
+}
+
+.search-bar {
+    display: flex;
+    gap: 0;
+    margin: 0 auto 20px auto;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 6px;
+    padding: 4px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    width: fit-content;
+    min-width: calc(200px + 32px * 3 * 1.1);
+}
+
+#search-input {
+    flex: 1;
+    max-width: 200px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #000;
+    outline: none;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+#search-input:focus {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 0 1px rgba(0, 123, 255, 0.3);
+}
+
+/* 搜索栏按钮统一样式 */
+#search-btn,
+.add-btn,
+.manage-mode-btn,
+.toggle-cards-btn,
+.import-btn,
+.export-btn,
+.wallpaper-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    color: #666;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    font-weight: 500;
+    min-width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.8);
+    margin: 0 2px;
+}
+
+#search-btn {
+    background: rgba(255, 255, 255, 0.8);
+    color: #666;
+    border: none;
+    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#search-btn:hover {
+    background: rgba(0, 123, 255, 0.1);
+    color: #007bff;
+    transform: none;
+}
+
+.add-btn {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid #000;
+    color: #000;
+}
+
+.add-btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-1px);
+}
+/* 管理按钮样式 */
+.manage-mode-btn {
+    position: static;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.8);
+    color: #666;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 2px;
+}
+
+.manage-mode-btn:hover {
+    background: rgba(255, 123, 0, 0.1);
+    color: #ff7b00;
+    transform: none;
+}
+
+.toggle-cards-btn:hover {
+    background: rgba(0, 123, 255, 0.1);
+    color: #007bff;
+    transform: none;
+}
+
+.manage-mode-btn:active {
+    transform: scale(0.95);
+}
+
+.import-btn {
+    background: white;
+    color: #000;
+    border: 1px solid #ddd;
+}
+
+.import-btn:hover {
+    background: #f8f9fa;
+    transform: translateY(-1px);
+}
+
+.export-btn {
+    background: white;
+    color: #000;
+    border: 1px solid #ddd;
+}
+
+.export-btn:hover {
+    background: #f8f9fa;
+    transform: translateY(-1px);
+}
+
+.import-btn:active,
+.export-btn:active {
+    transform: translateY(0);
+}
+
+/* 管理面板样式 */
+.manage-panel {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    z-index: 100;
+}
+
+.manage-panel .manage-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+}
+
+.manage-panel .import-btn,
+.manage-panel .export-btn,
+.manage-panel .batch-delete-btn,
+.manage-panel .select-all-btn,
+.manage-panel .wallpaper-btn,
+.manage-panel .layout-btn {
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    min-width: 120px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: white;
+    color: #000;
+    border: 1px solid #ddd;
+}
+
+.manage-panel .import-btn:hover,
+.manage-panel .export-btn:hover,
+.manage-panel .batch-delete-btn:hover,
+.manage-panel .select-all-btn:hover,
+.manage-panel .wallpaper-btn:hover,
+.manage-panel .layout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: #f8f9fa;
+}
+
+.manage-panel .batch-delete-btn {
+    background: white;
+    color: #000;
+    border: 1px solid #ddd;
+}
+
+.manage-panel .batch-delete-btn:hover {
+    background: #f8f9fa;
+}
+
+.manage-panel .select-all-btn {
+    background: white;
+    color: #000;
+    border: 1px solid #ddd;
+}
+
+.manage-panel .select-all-btn:hover {
+    background: #f8f9fa;
+}
+
+.ai-cards-container {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 4px;
+    margin-bottom: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+    justify-content: center;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.ai-card {
+    background: transparent; /* 卡片整体透明，由内部元素控制背景 */
+    border-radius: 4px;
+    padding: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    height: 50px; /* 增加高度以容纳上方按钮 */
+    min-height: 50px; /* 最小高度 */
+    max-height: 50px; /* 最大高度 */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* 防止内容溢出 */
+    box-sizing: border-box; /* 包含padding和border */
+}
+
+.ai-card.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.ai-card.drag-over {
+    border: 2px dashed #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+}
+
+/* 分类标签拖拽样式 */
+.tab-btn.dragging {
+    opacity: 0.6;
+    transform: scale(0.9);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.tab-btn.drag-over {
+    border: 2px dashed #ff7b00;
+    background: rgba(255, 123, 0, 0.1);
+    position: relative;
+}
+
+.tab-btn.drag-over::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -5px;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 20px;
+    background: #ff7b00;
+    border-radius: 2px;
+}
+
+/* 管理模式下分类标签的拖拽光标 */
+.tab-btn[draggable="true"] {
+    cursor: grab;
+}
+
+.tab-btn[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+.ai-card:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.9);
+    border-color: #ff7b00;
+}
+
+.ai-card:active {
+    transform: translateY(0);
+    background: rgba(255, 255, 255, 0.7);
+}
+
+/* 卡片头部基础样式 - 已合并到上方定义 */
+
+.ai-card-title {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex: 1; /* 占据剩余空间 */
+    min-width: 0; /* 允许文本溢出处理 */
+    overflow: hidden; /* 防止内容溢出 */
+}
+
+.ai-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.ai-card h3 {
+    font-size: 0.7rem;
+    color: #333;
+    margin: 0;
+    font-weight: 600;
+    line-height: 1.0;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* 单行显示 */
+    flex: 1; /* 占据剩余空间 */
+    min-width: 0; /* 允许文本溢出处理 */
+}
+
+.category-tag {
+    display: inline-block;
+    padding: 1px 3px;
+    border-radius: 2px;
+    font-size: 0.4rem;
+    font-weight: 500;
+    margin-bottom: 2px;
+    color: #333;
+    background: transparent;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    z-index: 1;
+}
+
+
+
+.ai-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: auto;
+}
+
+/* 移除访问按钮样式 */
+
+
+
+/* 分类颜色 */
+.category-text { background: #4CAF50; }
+.category-image { background: #FF9800; }
+.category-voice { background: #9C27B0; }
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .ai-cards-container {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    
+    .category-tabs {
+        gap: 4px;
+    }
+    
+    .tab-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+    
+    #search-input {
+        width: 200px;
+    }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ai-card {
+    animation: fadeIn 0.5s ease;
+}
+
+/* 添加卡片表单样式 */
+/* 按钮样式已统一到搜索栏按钮统一样式部分 */
+
+.add-card-form {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 500px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: fadeIn 0.3s ease;
+}
+
+.add-card-form h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.form-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.submit-btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    background: #4CAF50;
+    color: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: #45a049;
+}
+
+.cancel-btn {
+    padding: 8px 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    color: #666;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.cancel-btn:hover {
+    background: #f5f5f5;
+    border-color: #bbb;
+}
+
+/* 响应式设计 - 添加卡片表单 */
+@media (max-width: 768px) {
+    .add-card-form {
+        margin: 10px;
+        padding: 15px;
+    }
+    
+    .form-buttons {
+        flex-direction: column;
+    }
+    
+    .add-btn {
+        margin-left: 0;
+        margin-top: 8px;
+    }
+    
+    .search-bar {
+        flex-wrap: wrap;
+    }
+}
+
+/* 删除模式按钮样式 - 已统一到搜索栏按钮统一样式部分 */
+
+/* 添加卡片按钮样式 */
+.add-card-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border: none;
+    border-radius: 50%;
+    background: #ff7b00;
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.add-card-btn:hover {
+    background: #e66a00;
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.add-card-btn:active {
+    transform: scale(0.95);
+}
+
+/* 壁纸弹窗样式 */
+.wallpaper-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+.wallpaper-modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: slideIn 0.3s ease;
+}
+
+.wallpaper-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 10px;
+}
+
+.wallpaper-modal-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.close-wallpaper-modal {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #666;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.close-wallpaper-modal:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+.wallpaper-options {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.wallpaper-option h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.wallpaper-option h4:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.local-wallpapers,
+.solid-wallpapers {
+    margin-top: 10px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+
+
+.wallpaper-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+    gap: 8px;
+}
+
+.color-option {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+    border-color: #007bff;
+}
+
+.color-option.active {
+    border: 2px solid #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.3);
+}
+
+.add-wallpaper-btn {
+    width: 100%;
+    padding: 10px;
+    border: 2px dashed #ccc;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.5);
+    color: #666;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.add-wallpaper-btn:hover {
+    border-color: #007bff;
+    color: #007bff;
+    background: rgba(0, 123, 255, 0.1);
+}
+
+/* 编辑按钮样式 */
+.edit-btn {
+    width: 18px;
+    height: 18px;
+    border: none;
+    border-radius: 50%;
+    background: #007bff;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.edit-btn:hover {
+    background: #0056b3;
+    transform: scale(1.1);
+}
+
+.edit-btn:active {
+    transform: scale(0.95);
+}
+
+/* 卡片选择框样式 */
+.card-checkbox {
+    width: 18px;
+    height: 18px;
+    margin-right: 4px;
+    cursor: pointer;
+    accent-color: #4CAF50;
+    flex-shrink: 0;
+}
+
+.card-checkbox:checked {
+    transform: scale(1.1);
+}
+
+/* 删除按钮样式 */
+.delete-btn {
+    width: 18px;
+    height: 18px;
+    border: none;
+    border-radius: 50%;
+    background: #ff4444;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.delete-btn:hover {
+    background: #cc0000;
+    transform: scale(1.1);
+}
+
+.delete-btn:active {
+    transform: scale(0.95);
+}
+
+/* 自定义分类输入框组样式 */
+.custom-category-group {
+    display: none;
+    margin-top: 8px;
+    padding: 8px;
+    background: rgba(102, 126, 234, 0.05);
+    border-radius: 6px;
+    border-left: 3px solid #667eea;
+}
+
+.custom-category-group label {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.custom-category-group input {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+/* 卡片顶部区域 - 管理按钮 */
+.ai-card-top {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 20px;
+    margin-bottom: 2px;
+    padding: 0 2px;
+    background: transparent; /* 上半部分透明 */
+}
+
+/* 卡片内容区域 */
+.ai-card-content {
+    display: flex;
+    align-items: center;
+    height: 28px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.8); /* 下半部分保持原有颜色 */
+    border-radius: 0 0 4px 4px; /* 只对下半部分设置圆角 */
+}
+
+/* 卡片内部管理按钮样式 */
+.ai-card .manage-buttons {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+/* 布局设置弹窗样式 */
+.layout-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+.layout-modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 450px;
+    width: 90%;
+    max-height: 80vh;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: slideIn 0.3s ease;
+}
+
+.layout-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 10px;
+}
+
+.layout-modal-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.close-layout-modal {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #666;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.close-layout-modal:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+.quick-layouts {
+    margin-bottom: 20px;
+}
+
+.quick-layouts h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 1rem;
+}
+
+.layout-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.layout-btn-quick {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.layout-btn-quick:hover {
+    background: #f8f9fa;
+    border-color: #667eea;
+}
+
+.layout-btn-quick.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.custom-layout {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding-top: 15px;
+}
+
+.custom-layout h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1rem;
+}
+
+.layout-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.layout-option label {
+    font-size: 0.9rem;
+    color: #333;
+    font-weight: 500;
+    min-width: 80px;
+}
+
+.layout-option input[type="number"] {
+    width: 60px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.layout-option input[type="range"] {
+    flex: 1;
+    padding: 0;
+    height: 6px;
+    background: #ddd;
+    border-radius: 3px;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.layout-option input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #667eea;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.layout-option input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #667eea;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.value-display {
+    font-size: 0.9rem;
+    color: #667eea;
+    font-weight: 600;
+    min-width: 40px;
+    text-align: right;
+}
+
+.apply-layout,
+.reset-layout {
+    flex: 1;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.apply-layout {
+    background: #667eea;
+    color: white;
+}
+
+.apply-layout:hover {
+    background: #5a6fd8;
+    transform: translateY(-1px);
+}
+
+.reset-layout {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    border: 1px solid #667eea;
+}
+
+.reset-layout:hover {
+    background: rgba(102, 126, 234, 0.2);
+    transform: translateY(-1px);
+}
+
+/* 布局按钮样式 */
+.layout-btn {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 2px;
+}
+
+.layout-btn:hover {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(0, 0, 0, 0.2);
+    transform: translateY(-1px);
+}
+
+.layout-btn:active {
+    transform: translateY(0);
+}
+    gap: 3px;
+}
+
+.ai-card-title {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex-grow: 1;
+    min-width: 0;
+    position: relative;
+    padding-top: 8px;
+}
+
+.ai-card-title > div {
+    min-width: 0;
+}
+
+.ai-card-title h3 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 响应式设计 - 删除按钮 */
+@media (max-width: 768px) {
+    .delete-btn {
+        width: 16px;
+        height: 16px;
+        font-size: 10px;
+    }
+    
+    .ai-card-header {
+        gap: 3px;
+    }
+}

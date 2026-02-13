@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>综合平台</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="contact-info">
+                <span>版权归我，创意归你！有神仙建议？快砸邮件：</span>
+                <a href="mailto:291743302@qq.com">291743302@qq.com</a>
+            </div>
+            <h1 id="app-title">综合平台</h1>
+            <button id="edit-title-btn" class="edit-title-btn" style="display: none;">✏️</button>
+        </header>
+        
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="搜索AI软件...">
+            <button id="search-btn" class="search-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </button>
+            <button id="manage-mode-btn" class="manage-mode-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </button>
+            <button id="toggle-cards-btn" class="toggle-cards-btn">
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- 管理功能面板 -->
+        <div id="manage-panel" class="manage-panel" style="display: none;">
+            <div class="manage-buttons">
+                <button id="import-btn" class="import-btn">导入</button>
+                <button id="export-btn" class="export-btn">导出</button>
+                <button id="batch-delete-btn" class="batch-delete-btn">删除</button>
+                <button id="select-all-btn" class="select-all-btn">全选</button>
+                <button id="wallpaper-btn" class="wallpaper-btn">壁纸</button>
+                <button id="layout-btn" class="layout-btn">布局</button>
+            </div>
+        </div>
+        
+        <!-- 添加卡片表单 -->
+        <div id="add-card-form" class="add-card-form" style="display: none;">
+            <h3>添加新软件卡片</h3>
+            <form id="new-card-form">
+                <div class="form-group">
+                    <label for="card-name">软件名称:</label>
+                    <input type="text" id="card-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="card-website">网址链接:</label>
+                    <input type="url" id="card-website" required>
+                </div>
+                <div class="form-group">
+                    <label for="card-category">分类:</label>
+                    <select id="card-category" required>
+                        <option value="">请选择分类</option>
+                        <option value="text">文本处理</option>
+                        <option value="custom">自定义分类</option>
+                    </select>
+                </div>
+                <div class="form-group" id="custom-category-group" style="display: none;">
+                    <label for="custom-category">自定义分类名称:</label>
+                    <input type="text" id="custom-category" placeholder="请输入自定义分类名称">
+                </div>
+                <div class="form-group">
+                    <label for="card-icon">图标 (可选):</label>
+                    <input type="text" id="card-icon" placeholder="例如: 🤖">
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="submit-btn">添加卡片</button>
+                    <button type="button" id="cancel-btn" class="cancel-btn">取消</button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="category-tabs" id="category-tabs">
+            <button class="tab-btn active" data-category="all">全部</button>
+            <button class="tab-btn" data-category="text">文本处理</button>
+        </div>
+        
+        <div class="ai-cards-container" id="ai-cards">
+            <!-- AI软件卡片将通过JavaScript动态生成 -->
+        </div>
+        <button id="add-card-btn" class="add-card-btn">+</button>
+    </div>
+    
+    <!-- 壁纸设置弹窗 -->
+    <div id="wallpaper-modal" class="wallpaper-modal" style="display: none;">
+        <div class="wallpaper-modal-content">
+            <div class="wallpaper-modal-header">
+                <h3>壁纸设置</h3>
+                <button id="close-wallpaper-modal" class="close-wallpaper-modal">×</button>
+            </div>
+            <div class="wallpaper-modal-body">
+                <div class="wallpaper-options">
+                    <div class="wallpaper-option" data-type="local">
+                        <h4>本地壁纸</h4>
+                        <div class="local-wallpapers" style="display: none;">
+                            <div class="wallpaper-grid">
+                                <!-- 本地壁纸将通过JavaScript动态生成 -->
+                            </div>
+                            <button class="add-wallpaper-btn">+ 添加壁纸</button>
+                        </div>
+                    </div>
+                    <div class="wallpaper-option" data-type="solid">
+                        <h4>纯色壁纸</h4>
+                        <div class="solid-wallpapers" style="display: none;">
+                            <div class="color-grid">
+                                <div class="color-option" data-color="#ffffff" style="background-color: #ffffff;"></div>
+                                <div class="color-option" data-color="#f0f0f0" style="background-color: #f0f0f0;"></div>
+                                <div class="color-option" data-color="#e0e0e0" style="background-color: #e0e0e0;"></div>
+                                <div class="color-option" data-color="#d0d0d0" style="background-color: #d0d0d0;"></div>
+                                <div class="color-option" data-color="#c0c0c0" style="background-color: #c0c0c0;"></div>
+                                <div class="color-option" data-color="#a0a0a0" style="background-color: #a0a0a0;"></div>
+                                <div class="color-option" data-color="#808080" style="background-color: #808080;"></div>
+                                <div class="color-option" data-color="#606060" style="background-color: #606060;"></div>
+                                <div class="color-option" data-color="#404040" style="background-color: #404040;"></div>
+                                <div class="color-option" data-color="#202020" style="background-color: #202020;"></div>
+                                <div class="color-option" data-color="#000000" style="background-color: #000000;"></div>
+                                <div class="color-option" data-color="#ff6b6b" style="background-color: #ff6b6b;"></div>
+                                <div class="color-option" data-color="#4ecdc4" style="background-color: #4ecdc4;"></div>
+                                <div class="color-option" data-color="#45b7d1" style="background-color: #45b7d1;"></div>
+                                <div class="color-option" data-color="#96ceb4" style="background-color: #96ceb4;"></div>
+                                <div class="color-option" data-color="#feca57" style="background-color: #feca57;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 布局设置弹窗 -->
+        <div id="layout-modal" class="layout-modal" style="display: none;">
+            <div class="layout-modal-content">
+                <div class="layout-modal-header">
+                    <h3>布局</h3>
+                    <button id="close-layout-modal" class="close-layout-modal">×</button>
+                </div>
+                <div class="layout-modal-body">
+                    <div class="quick-layouts">
+                        <h4>快捷布局</h4>
+                        <div class="layout-buttons">
+                            <button class="layout-btn-quick" data-layout="2x4">2×4</button>
+                            <button class="layout-btn-quick" data-layout="2x5">2×5</button>
+                            <button class="layout-btn-quick" data-layout="2x6">2×6</button>
+                            <button class="layout-btn-quick" data-layout="2x7">2×7</button>
+                            <button class="layout-btn-quick" data-layout="3x3">3×3</button>
+                            <button class="layout-btn-quick" data-layout="custom">自定义</button>
+                        </div>
+                    </div>
+                    
+                    <div class="custom-layout" id="custom-layout" style="display: none;">
+                        <h4>自定义设置</h4>
+                        <div class="layout-option">
+                            <label for="rows-input">行数 (1-8):</label>
+                            <input type="number" id="rows-input" min="1" max="8" value="3">
+                            <span class="value-display" id="rows-value">3</span>
+                        </div>
+                        
+                        <div class="layout-option">
+                            <label for="columns-input">列数 (1-10):</label>
+                            <input type="number" id="columns-input" min="1" max="10" value="10">
+                            <span class="value-display" id="columns-value">10</span>
+                        </div>
+                        
+                        <div class="layout-option">
+                            <label for="icon-size-slider">图标大小 (0-100%):</label>
+                            <input type="range" id="icon-size-slider" min="0" max="100" value="100">
+                            <span class="value-display" id="icon-size-value">100%</span>
+                        </div>
+                        
+                        <div class="layout-buttons">
+                            <button id="apply-layout" class="apply-layout">应用设置</button>
+                            <button id="reset-layout" class="reset-layout">重置默认</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    <script src="./script.js"></script>
+</body>
+</html>

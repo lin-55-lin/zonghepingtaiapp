@@ -1,0 +1,16 @@
+# GitHub Pages 配置
+title: AI软件集成平台
+description: 现代化的AI软件管理平台
+baseurl: "" # 如果部署在子目录，填写子目录名
+url: "https://your-username.github.io" # 替换为您的GitHub Pages地址
+
+# 构建设置
+markdown: kramdown
+plugins:
+  - jekyll-sitemap
+
+# 排除文件
+exclude:
+  - README.md
+  - .github/
+  - _config.yml

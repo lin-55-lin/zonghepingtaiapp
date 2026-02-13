@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>批量删除功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>批量删除功能测试</h1>
+    
+    <div class="test-section">
+        <h2>功能完整性测试</h2>
+        <div id="function-test">
+            <button onclick="testFunctions()">测试函数存在性</button>
+            <div id="function-result"></div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>HTML元素测试</h2>
+        <div id="html-test">
+            <button onclick="testHTMLElements()">测试HTML元素</button>
+            <div id="html-result"></div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>CSS样式测试</h2>
+        <div id="css-test">
+            <button onclick="testCSS()">测试CSS样式</button>
+            <div id="css-result"></div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>实际功能测试</h2>
+        <div id="functional-test">
+            <p>请打开 <a href="软件集成.html" target="_blank">软件集成.html</a> 文件进行实际功能测试：</p>
+            <ol>
+                <li>点击"管理"按钮进入管理模式</li>
+                <li>检查卡片上是否显示选择框</li>
+                <li>选择几个卡片的选择框</li>
+                <li>点击"批量删除"按钮</li>
+                <li>确认删除操作</li>
+                <li>检查卡片是否被正确删除</li>
+                <li>测试"全选"按钮功能</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function testFunctions() {
+            const resultDiv = document.getElementById('function-result');
+            resultDiv.innerHTML = '';
+            
+            // 测试函数是否存在
+            const functions = ['handleBatchDelete', 'handleSelectAll'];
+            let allPassed = true;
+            
+            functions.forEach(funcName => {
+                const exists = typeof window[funcName] === 'function';
+                const status = exists ? '✓ 存在' : '✗ 不存在';
+                const className = exists ? 'success' : 'error';
+                
+                const div = document.createElement('div');
+                div.className = `test-result ${className}`;
+                div.innerHTML = `<strong>${funcName}</strong>: ${status}`;
+                resultDiv.appendChild(div);
+                
+                if (!exists) allPassed = false;
+            });
+            
+            const summary = document.createElement('div');
+            summary.className = `test-result ${allPassed ? 'success' : 'error'}`;
+            summary.innerHTML = `<strong>总结:</strong> ${allPassed ? '所有函数都存在' : '部分函数缺失'}`;
+            resultDiv.appendChild(summary);
+        }
+
+        function testHTMLElements() {
+            const resultDiv = document.getElementById('html-result');
+            resultDiv.innerHTML = '';
+            
+            // 测试HTML元素是否存在
+            const elements = ['batch-delete-btn', 'select-all-btn'];
+            let allPassed = true;
+            
+            elements.forEach(elementId => {
+                const exists = document.getElementById(elementId) !== null;
+                const status = exists ? '✓ 存在' : '✗ 不存在';
+                const className = exists ? 'success' : 'error';
+                
+                const div = document.createElement('div');
+                div.className = `test-result ${className}`;
+                div.innerHTML = `<strong>#${elementId}</strong>: ${status}`;
+                resultDiv.appendChild(div);
+                
+                if (!exists) allPassed = false;
+            });
+            
+            const summary = document.createElement('div');
+            summary.className = `test-result ${allPassed ? 'success' : 'error'}`;
+            summary.innerHTML = `<strong>总结:</strong> ${allPassed ? '所有HTML元素都存在' : '部分HTML元素缺失'}`;
+            resultDiv.appendChild(summary);
+        }
+
+        function testCSS() {
+            const resultDiv = document.getElementById('css-result');
+            resultDiv.innerHTML = '';
+            
+            // 测试CSS类是否存在
+            const cssClasses = ['.batch-delete-btn', '.select-all-btn', '.card-checkbox'];
+            let allPassed = true;
+            
+            cssClasses.forEach(cssClass => {
+                // 创建一个临时元素来测试样式
+                const tempElement = document.createElement('div');
+                tempElement.className = cssClass.replace('.', '');
+                document.body.appendChild(tempElement);
+                
+                const computedStyle = window.getComputedStyle(tempElement);
+                const hasStyle = computedStyle.display !== 'inline' || computedStyle.backgroundColor !== '';
+                
+                document.body.removeChild(tempElement);
+                
+                const status = hasStyle ? '✓ 有样式' : '⚠ 样式可能缺失';
+                const className = hasStyle ? 'success' : 'warning';
+                
+                const div = document.createElement('div');
+                div.className = `test-result ${className}`;
+                div.innerHTML = `<strong>${cssClass}</strong>: ${status}`;
+                resultDiv.appendChild(div);
+                
+                if (!hasStyle) allPassed = false;
+            });
+            
+            const summary = document.createElement('div');
+            summary.className = `test-result ${allPassed ? 'success' : 'warning'}`;
+            summary.innerHTML = `<strong>总结:</strong> ${allPassed ? 'CSS样式基本正常' : '部分CSS样式可能缺失'}`;
+            resultDiv.appendChild(summary);
+        }
+    </script>
+</body>
+</html>
