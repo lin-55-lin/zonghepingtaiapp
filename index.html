@@ -235,17 +235,8 @@
         // 显示版本
         document.getElementById('versionDisplay').textContent = 'v' + APP_VERSION;
 
-        // GitHub Token 管理
-        let GITHUB_TOKEN = localStorage.getItem('github_token') || '';
-        
-        // 如果没有token，提示输入
-        if (!GITHUB_TOKEN) {
-            const token = prompt('请输入你的GitHub Token（第一次使用需要）：\nSettings → Developer settings → Personal access tokens → Tokens (classic)\n勾选 repo 权限');
-            if (token) {
-                GITHUB_TOKEN = token;
-                localStorage.setItem('github_token', token);
-            }
-        }
+       // GitHub Token - 直接写死，所有人都用这一个
+const GITHUB_TOKEN = 'gphp_qsBPM18VqnmSKRCX2koAeeMpSVdUhH3qWklwd';
 
         // ============ 数据管理 ============
         
