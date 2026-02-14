@@ -1,268 +1,327 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>可配置导航页</title>
+    <title>综合平台 · 共享版</title>
+    <link rel="stylesheet" href="./style.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Microsoft YaHei', sans-serif;
-            min-height: 100vh;
-            transition: background-color 0.3s;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.9);
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .toolbar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        button {
+        /* 添加一些提示样式 */
+        .sync-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 30px;
             background: #2ea44f;
             color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
             font-size: 14px;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        button:hover {
-            opacity: 0.9;
-        }
-        button.danger {
-            background: #dc3545;
-        }
-        button.secondary {
-            background: #6c757d;
-        }
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-            position: relative;
-        }
-        .card:hover {
-            transform: translateY(-2px);
-        }
-        .card h3 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-        .card a {
-            color: #0366d6;
-            text-decoration: none;
-            word-break: break-all;
-        }
-        .card a:hover {
-            text-decoration: underline;
-        }
-        .card-actions {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            display: flex;
-            gap: 5px;
-        }
-        .card-actions button {
-            padding: 4px 8px;
-            font-size: 12px;
-            background: #dc3545;
-        }
-        .edit-panel {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-        .edit-panel h3 {
-            margin-bottom: 15px;
-            color: #333;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-            font-weight: 500;
-        }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        .wallpaper-preview {
-            width: 100%;
-            height: 100px;
-            border-radius: 8px;
-            margin: 10px 0;
-            border: 2px solid #ddd;
-        }
-        .status {
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             display: none;
+            z-index: 9999;
         }
-        .status.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .sync-status.show {
             display: block;
         }
-        .status.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            display: block;
-        }
-        .version {
-            text-align: right;
-            color: #6c757d;
+        .version-tag {
             font-size: 12px;
-            margin-top: 20px;
+            color: #666;
+            margin-left: 10px;
         }
     </style>
 </head>
-<body id="mainBody">
+<body>
     <div class="container">
-        <h1>
-            🔗 可配置导航页
-            <div>
-                <button onclick="showAddCardForm()" class="secondary">➕ 添加网址</button>
-                <button onclick="showWallpaperForm()" class="secondary">🎨 更改壁纸</button>
-                <button onclick="forceRefresh()">🔄 刷新</button>
+        <header class="header">
+            <div class="contact-info">
+                <span>版权归我，创意归你！有神仙建议？快砸邮件：</span>
+                <a href="mailto:291743302@qq.com">291743302@qq.com</a>
             </div>
-        </h1>
-
-        <!-- 状态提示 -->
-        <div id="statusMessage" class="status"></div>
-
-        <!-- 编辑面板（默认隐藏） -->
-        <div id="editPanel" class="edit-panel" style="display: none;">
-            <div id="editPanelContent"></div>
+            <h1 id="app-title">
+                综合平台
+                <span class="version-tag" id="versionDisplay"></span>
+            </h1>
+            <button id="edit-title-btn" class="edit-title-btn" style="display: none;">✏️</button>
+        </header>
+        
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="搜索AI软件...">
+            <button id="search-btn" class="search-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </button>
+            <button id="manage-mode-btn" class="manage-mode-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </button>
+            <button id="toggle-cards-btn" class="toggle-cards-btn">
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                </svg>
+            </button>
         </div>
-
-        <!-- 网址卡片列表 -->
-        <div id="cardGrid" class="card-grid">
-            <div class="loading">加载中...</div>
+        
+        <!-- 管理功能面板 -->
+        <div id="manage-panel" class="manage-panel" style="display: none;">
+            <div class="manage-buttons">
+                <button id="import-btn" class="import-btn">导入</button>
+                <button id="export-btn" class="export-btn">导出</button>
+                <button id="batch-delete-btn" class="batch-delete-btn">删除</button>
+                <button id="select-all-btn" class="select-all-btn">全选</button>
+                <button id="wallpaper-btn" class="wallpaper-btn">壁纸</button>
+                <button id="layout-btn" class="layout-btn">布局</button>
+                <button id="sync-btn" class="sync-btn" style="background: #6f42c1;">🔄 同步</button>
+            </div>
         </div>
-
-        <!-- 版本信息 -->
-        <div class="version" id="versionDisplay"></div>
+        
+        <!-- 添加卡片表单 -->
+        <div id="add-card-form" class="add-card-form" style="display: none;">
+            <h3>添加新软件卡片</h3>
+            <form id="new-card-form">
+                <div class="form-group">
+                    <label for="card-name">软件名称:</label>
+                    <input type="text" id="card-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="card-website">网址链接:</label>
+                    <input type="url" id="card-website" required>
+                </div>
+                <div class="form-group">
+                    <label for="card-category">分类:</label>
+                    <select id="card-category" required>
+                        <option value="">请选择分类</option>
+                        <option value="text">文本处理</option>
+                        <option value="custom">自定义分类</option>
+                    </select>
+                </div>
+                <div class="form-group" id="custom-category-group" style="display: none;">
+                    <label for="custom-category">自定义分类名称:</label>
+                    <input type="text" id="custom-category" placeholder="请输入自定义分类名称">
+                </div>
+                <div class="form-group">
+                    <label for="card-icon">图标 (可选):</label>
+                    <input type="text" id="card-icon" placeholder="例如: 🤖">
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="submit-btn">添加卡片</button>
+                    <button type="button" id="cancel-btn" class="cancel-btn">取消</button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="category-tabs" id="category-tabs">
+            <button class="tab-btn active" data-category="all">全部</button>
+            <button class="tab-btn" data-category="text">文本处理</button>
+        </div>
+        
+        <div class="ai-cards-container" id="ai-cards">
+            <!-- AI软件卡片将通过JavaScript动态生成 -->
+        </div>
+        <button id="add-card-btn" class="add-card-btn">+</button>
     </div>
+    
+    <!-- 壁纸设置弹窗 -->
+    <div id="wallpaper-modal" class="wallpaper-modal" style="display: none;">
+        <div class="wallpaper-modal-content">
+            <div class="wallpaper-modal-header">
+                <h3>壁纸设置</h3>
+                <button id="close-wallpaper-modal" class="close-wallpaper-modal">×</button>
+            </div>
+            <div class="wallpaper-modal-body">
+                <div class="wallpaper-options">
+                    <div class="wallpaper-option" data-type="local">
+                        <h4>本地壁纸</h4>
+                        <div class="local-wallpapers" style="display: none;">
+                            <div class="wallpaper-grid">
+                                <!-- 本地壁纸将通过JavaScript动态生成 -->
+                            </div>
+                            <button class="add-wallpaper-btn">+ 添加壁纸</button>
+                        </div>
+                    </div>
+                    <div class="wallpaper-option" data-type="solid">
+                        <h4>纯色壁纸</h4>
+                        <div class="solid-wallpapers" style="display: none;">
+                            <div class="color-grid">
+                                <div class="color-option" data-color="#ffffff" style="background-color: #ffffff;"></div>
+                                <div class="color-option" data-color="#f0f0f0" style="background-color: #f0f0f0;"></div>
+                                <div class="color-option" data-color="#e0e0e0" style="background-color: #e0e0e0;"></div>
+                                <div class="color-option" data-color="#d0d0d0" style="background-color: #d0d0d0;"></div>
+                                <div class="color-option" data-color="#c0c0c0" style="background-color: #c0c0c0;"></div>
+                                <div class="color-option" data-color="#a0a0a0" style="background-color: #a0a0a0;"></div>
+                                <div class="color-option" data-color="#808080" style="background-color: #808080;"></div>
+                                <div class="color-option" data-color="#606060" style="background-color: #606060;"></div>
+                                <div class="color-option" data-color="#404040" style="background-color: #404040;"></div>
+                                <div class="color-option" data-color="#202020" style="background-color: #202020;"></div>
+                                <div class="color-option" data-color="#000000" style="background-color: #000000;"></div>
+                                <div class="color-option" data-color="#ff6b6b" style="background-color: #ff6b6b;"></div>
+                                <div class="color-option" data-color="#4ecdc4" style="background-color: #4ecdc4;"></div>
+                                <div class="color-option" data-color="#45b7d1" style="background-color: #45b7d1;"></div>
+                                <div class="color-option" data-color="#96ceb4" style="background-color: #96ceb4;"></div>
+                                <div class="color-option" data-color="#feca57" style="background-color: #feca57;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 布局设置弹窗 -->
+    <div id="layout-modal" class="layout-modal" style="display: none;">
+        <div class="layout-modal-content">
+            <div class="layout-modal-header">
+                <h3>布局</h3>
+                <button id="close-layout-modal" class="close-layout-modal">×</button>
+            </div>
+            <div class="layout-modal-body">
+                <div class="quick-layouts">
+                    <h4>快捷布局</h4>
+                    <div class="layout-buttons">
+                        <button class="layout-btn-quick" data-layout="2x4">2×4</button>
+                        <button class="layout-btn-quick" data-layout="2x5">2×5</button>
+                        <button class="layout-btn-quick" data-layout="2x6">2×6</button>
+                        <button class="layout-btn-quick" data-layout="2x7">2×7</button>
+                        <button class="layout-btn-quick" data-layout="3x3">3×3</button>
+                        <button class="layout-btn-quick" data-layout="custom">自定义</button>
+                    </div>
+                </div>
+                
+                <div class="custom-layout" id="custom-layout" style="display: none;">
+                    <h4>自定义设置</h4>
+                    <div class="layout-option">
+                        <label for="rows-input">行数 (1-8):</label>
+                        <input type="number" id="rows-input" min="1" max="8" value="3">
+                        <span class="value-display" id="rows-value">3</span>
+                    </div>
+                    
+                    <div class="layout-option">
+                        <label for="columns-input">列数 (1-10):</label>
+                        <input type="number" id="columns-input" min="1" max="10" value="10">
+                        <span class="value-display" id="columns-value">10</span>
+                    </div>
+                    
+                    <div class="layout-option">
+                        <label for="icon-size-slider">图标大小 (0-100%):</label>
+                        <input type="range" id="icon-size-slider" min="0" max="100" value="100">
+                        <span class="value-display" id="icon-size-value">100%</span>
+                    </div>
+                    
+                    <div class="layout-buttons">
+                        <button id="apply-layout" class="apply-layout">应用设置</button>
+                        <button id="reset-layout" class="reset-layout">重置默认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 同步状态提示 -->
+    <div id="syncStatus" class="sync-status"></div>
 
     <script>
         // ============ 配置 ============
-        const APP_VERSION = 'v2.0.0';
-        const REPO_OWNER = 'lin-55-lin';
-        const REPO_NAME = 'zonghepingtaiapp';
+        const APP_VERSION = 'v3.0.0';
+        const REPO_OWNER = 'lin-55-lin';        // 改成你的GitHub用户名
+        const REPO_NAME = 'zonghepingtaiapp';   // 改成你的仓库名
         // ==============================
 
-        let GITHUB_TOKEN = localStorage.getItem('github_token') || '';
+        // 显示版本
+        document.getElementById('versionDisplay').textContent = 'v' + APP_VERSION;
 
+        // GitHub Token 管理
+        let GITHUB_TOKEN = localStorage.getItem('github_token') || '';
+        
         // 如果没有token，提示输入
         if (!GITHUB_TOKEN) {
-            const token = prompt('请输入你的GitHub Token：');
+            const token = prompt('请输入你的GitHub Token（第一次使用需要）：\nSettings → Developer settings → Personal access tokens → Tokens (classic)\n勾选 repo 权限');
             if (token) {
                 GITHUB_TOKEN = token;
                 localStorage.setItem('github_token', token);
             }
         }
 
-        // 显示版本
-        document.getElementById('versionDisplay').textContent = '版本: ' + APP_VERSION;
+        // ============ 数据管理 ============
+        
+        // 显示同步状态
+        function showSyncStatus(message, isSuccess = true) {
+            const status = document.getElementById('syncStatus');
+            status.textContent = message;
+            status.style.backgroundColor = isSuccess ? '#2ea44f' : '#dc3545';
+            status.classList.add('show');
+            setTimeout(() => {
+                status.classList.remove('show');
+            }, 3000);
+        }
 
-        // 页面加载时读取数据
-        window.onload = function() {
-            loadAllData();
-        };
-
-        // ============ 数据操作 ============
-
-        // 加载所有数据（网址卡片和壁纸）
+        // 加载所有数据
         async function loadAllData() {
             try {
-                // 读取所有Issues
+                showSyncStatus('正在加载数据...', true);
+                
+                // 获取所有Issues
                 const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all&_t=${Date.now()}`);
                 const issues = await response.json();
                 
-                // 分离配置和卡片
-                const wallpaperIssue = issues.find(i => i.title === '【壁纸配置】');
-                const cardIssues = issues.filter(i => i.title.startsWith('【卡片】'));
+                // 分离不同类型的数据
+                const cards = issues.filter(i => i.title.startsWith('【卡片】'));
+                const wallpaper = issues.find(i => i.title === '【壁纸配置】');
+                const layout = issues.find(i => i.title === '【布局配置】');
                 
                 // 应用壁纸
-                if (wallpaperIssue) {
-                    applyWallpaper(wallpaperIssue.body);
+                if (wallpaper) {
+                    applyWallpaper(wallpaper.body);
+                }
+                
+                // 应用布局
+                if (layout) {
+                    applyLayout(layout.body);
                 }
                 
                 // 显示卡片
-                displayCards(cardIssues);
+                displayCards(cards);
                 
+                showSyncStatus('加载完成', true);
             } catch (error) {
-                showStatus('加载失败: ' + error.message, 'error');
+                showSyncStatus('加载失败: ' + error.message, false);
             }
         }
 
-        // 显示网址卡片
+        // 显示卡片
         function displayCards(cardIssues) {
-            const grid = document.getElementById('cardGrid');
+            const container = document.getElementById('ai-cards');
             
-            if (cardIssues.length === 0) {
-                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #6c757d;">暂无网址卡片，点击"添加网址"创建</div>';
+            if (!cardIssues || cardIssues.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">暂无卡片，点击右下角 + 添加</div>';
                 return;
             }
             
             let html = '';
             cardIssues.forEach(issue => {
-                // 解析卡片数据（格式：标题|网址）
-                const [title, url] = issue.body.split('|');
+                // 解析卡片数据 (格式: 名称|网址|分类|图标)
+                const [name, url, category, icon = '🔗'] = issue.body.split('|');
                 html += `
-                    <div class="card">
-                        <div class="card-actions">
-                            <button onclick="deleteCard('${issue.number}')" class="danger">✕</button>
+                    <div class="ai-card" data-id="${issue.number}" data-category="${category || '其他'}">
+                        <div class="card-header">
+                            <span class="card-icon">${icon}</span>
+                            <h3>${name}</h3>
                         </div>
-                        <h3>${title || '未命名'}</h3>
-                        <a href="${url}" target="_blank">${url || '无网址'}</a>
+                        <div class="card-body">
+                            <a href="${url}" target="_blank">${url}</a>
+                        </div>
+                        <div class="card-footer">
+                            <span class="category-tag">${category || '其他'}</span>
+                        </div>
                     </div>
                 `;
             });
-            grid.innerHTML = html;
+            container.innerHTML = html;
         }
 
         // 应用壁纸
@@ -270,42 +329,14 @@
             document.body.style.backgroundColor = color || '#f5f5f5';
         }
 
-        // ============ 添加网址卡片 ============
-
-        function showAddCardForm() {
-            const panel = document.getElementById('editPanel');
-            const content = document.getElementById('editPanelContent');
-            
-            content.innerHTML = `
-                <h3>➕ 添加新网址</h3>
-                <div class="form-group">
-                    <label>卡片标题</label>
-                    <input type="text" id="cardTitle" placeholder="例如：百度">
-                </div>
-                <div class="form-group">
-                    <label>网址链接</label>
-                    <input type="url" id="cardUrl" placeholder="https://www.baidu.com">
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="saveCard()">保存</button>
-                    <button onclick="hideEditPanel()" class="secondary">取消</button>
-                </div>
-            `;
-            
-            panel.style.display = 'block';
+        // 应用布局
+        function applyLayout(layoutData) {
+            // 这里实现你的布局逻辑
+            console.log('应用布局:', layoutData);
         }
 
-        async function saveCard() {
-            const title = document.getElementById('cardTitle').value.trim();
-            const url = document.getElementById('cardUrl').value.trim();
-            
-            if (!title || !url) {
-                showStatus('请填写完整信息', 'error');
-                return;
-            }
-            
-            showStatus('保存中...', 'success');
-            
+        // 保存卡片
+        async function saveCard(name, url, category, icon = '') {
             try {
                 const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues`, {
                     method: 'POST',
@@ -314,31 +345,28 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        title: `【卡片】${title}`,
-                        body: `${title}|${url}`
+                        title: `【卡片】${name}`,
+                        body: `${name}|${url}|${category}|${icon}`
                     })
                 });
                 
                 if (response.ok) {
-                    showStatus('添加成功！', 'success');
-                    hideEditPanel();
-                    loadAllData(); // 重新加载
+                    showSyncStatus('卡片添加成功！', true);
+                    return true;
                 } else {
                     const err = await response.json();
-                    showStatus('保存失败: ' + err.message, 'error');
+                    showSyncStatus('保存失败: ' + err.message, false);
+                    return false;
                 }
             } catch (error) {
-                showStatus('网络错误', 'error');
+                showSyncStatus('网络错误', false);
+                return false;
             }
         }
 
-        // ============ 删除卡片 ============
-
+        // 删除卡片
         async function deleteCard(issueNumber) {
-            if (!confirm('确定要删除这个卡片吗？')) return;
-            
             try {
-                // GitHub API 不能真正删除，我们关闭它
                 const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${issueNumber}`, {
                     method: 'PATCH',
                     headers: {
@@ -351,68 +379,26 @@
                 });
                 
                 if (response.ok) {
-                    showStatus('删除成功', 'success');
-                    loadAllData();
+                    showSyncStatus('删除成功', true);
+                    return true;
                 }
             } catch (error) {
-                showStatus('删除失败', 'error');
+                showSyncStatus('删除失败', false);
+                return false;
             }
         }
 
-        // ============ 壁纸设置 ============
-
-        function showWallpaperForm() {
-            const panel = document.getElementById('editPanel');
-            const content = document.getElementById('editPanelContent');
-            
-            const colors = [
-                '#f5f5f5', '#e3f2fd', '#fff3e0', '#fce4ec', '#e8f5e8',
-                '#ffebee', '#e0f2f1', '#fff8e1', '#f3e5f5', '#e1f5fe'
-            ];
-            
-            let colorOptions = '';
-            colors.forEach(c => {
-                colorOptions += `<option value="${c}" style="background-color: ${c};">${c}</option>`;
-            });
-            
-            content.innerHTML = `
-                <h3>🎨 更改壁纸颜色</h3>
-                <div class="form-group">
-                    <label>选择颜色</label>
-                    <select id="wallpaperColor">
-                        ${colorOptions}
-                    </select>
-                </div>
-                <div class="wallpaper-preview" id="colorPreview"></div>
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="saveWallpaper()">保存</button>
-                    <button onclick="hideEditPanel()" class="secondary">取消</button>
-                </div>
-            `;
-            
-            panel.style.display = 'block';
-            
-            // 预览效果
-            document.getElementById('wallpaperColor').addEventListener('change', function(e) {
-                document.getElementById('colorPreview').style.backgroundColor = e.target.value;
-            });
-        }
-
-        async function saveWallpaper() {
-            const color = document.getElementById('wallpaperColor').value;
-            
-            showStatus('保存中...', 'success');
-            
+        // 保存壁纸
+        async function saveWallpaper(color) {
             try {
-                // 先查找是否已有壁纸配置
+                // 查找是否已有壁纸配置
                 const searchResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all&_t=${Date.now()}`);
                 const issues = await searchResponse.json();
-                const existingWallpaper = issues.find(i => i.title === '【壁纸配置】');
+                const existing = issues.find(i => i.title === '【壁纸配置】');
                 
                 let response;
-                if (existingWallpaper) {
-                    // 更新现有壁纸
-                    response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${existingWallpaper.number}`, {
+                if (existing) {
+                    response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${existing.number}`, {
                         method: 'PATCH',
                         headers: {
                             'Authorization': `token ${GITHUB_TOKEN}`,
@@ -423,7 +409,6 @@
                         })
                     });
                 } else {
-                    // 创建新壁纸配置
                     response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues`, {
                         method: 'POST',
                         headers: {
@@ -438,35 +423,111 @@
                 }
                 
                 if (response.ok) {
-                    showStatus('壁纸已更新！', 'success');
-                    hideEditPanel();
-                    applyWallpaper(color);
+                    showSyncStatus('壁纸已更新', true);
+                    return true;
                 }
             } catch (error) {
-                showStatus('保存失败', 'error');
+                showSyncStatus('壁纸保存失败', false);
+                return false;
             }
         }
 
-        // ============ 工具函数 ============
-
-        function hideEditPanel() {
-            document.getElementById('editPanel').style.display = 'none';
-        }
-
+        // 强制刷新
         async function forceRefresh() {
-            showStatus('刷新中...', 'success');
             await loadAllData();
-            showStatus('刷新完成', 'success');
         }
 
-        function showStatus(message, type) {
-            const status = document.getElementById('statusMessage');
-            status.textContent = message;
-            status.className = `status ${type}`;
-            setTimeout(() => {
-                status.style.display = 'none';
-            }, 3000);
-        }
+        // ============ 事件绑定 ============
+
+        // 页面加载
+        window.onload = function() {
+            loadAllData();
+            
+            // 绑定添加卡片按钮
+            document.getElementById('add-card-btn').addEventListener('click', function() {
+                document.getElementById('add-card-form').style.display = 'block';
+            });
+            
+            // 绑定取消按钮
+            document.getElementById('cancel-btn').addEventListener('click', function() {
+                document.getElementById('add-card-form').style.display = 'none';
+            });
+            
+            // 绑定表单提交
+            document.getElementById('new-card-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('card-name').value;
+                const url = document.getElementById('card-website').value;
+                const category = document.getElementById('card-category').value;
+                const icon = document.getElementById('card-icon').value;
+                
+                if (await saveCard(name, url, category, icon)) {
+                    document.getElementById('add-card-form').style.display = 'none';
+                    this.reset();
+                    loadAllData();
+                }
+            });
+            
+            // 绑定分类选择
+            document.getElementById('card-category').addEventListener('change', function() {
+                const customGroup = document.getElementById('custom-category-group');
+                customGroup.style.display = this.value === 'custom' ? 'block' : 'none';
+            });
+            
+            // 绑定管理模式按钮
+            document.getElementById('manage-mode-btn').addEventListener('click', function() {
+                const panel = document.getElementById('manage-panel');
+                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+            });
+            
+            // 绑定壁纸按钮
+            document.getElementById('wallpaper-btn').addEventListener('click', function() {
+                document.getElementById('wallpaper-modal').style.display = 'flex';
+            });
+            
+            // 关闭壁纸弹窗
+            document.getElementById('close-wallpaper-modal').addEventListener('click', function() {
+                document.getElementById('wallpaper-modal').style.display = 'none';
+            });
+            
+            // 绑定颜色选择
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.addEventListener('click', async function() {
+                    const color = this.dataset.color;
+                    if (await saveWallpaper(color)) {
+                        applyWallpaper(color);
+                        document.getElementById('wallpaper-modal').style.display = 'none';
+                    }
+                });
+            });
+            
+            // 绑定同步按钮
+            document.getElementById('sync-btn').addEventListener('click', forceRefresh);
+            
+            // 绑定布局按钮
+            document.getElementById('layout-btn').addEventListener('click', function() {
+                document.getElementById('layout-modal').style.display = 'flex';
+            });
+            
+            // 关闭布局弹窗
+            document.getElementById('close-layout-modal').addEventListener('click', function() {
+                document.getElementById('layout-modal').style.display = 'none';
+            });
+            
+            // 点击弹窗外部关闭
+            window.addEventListener('click', function(e) {
+                if (e.target.classList.contains('wallpaper-modal')) {
+                    document.getElementById('wallpaper-modal').style.display = 'none';
+                }
+                if (e.target.classList.contains('layout-modal')) {
+                    document.getElementById('layout-modal').style.display = 'none';
+                }
+            });
+        };
     </script>
+    
+    <!-- 你的原始 script.js 内容保持不变，可以放在下面 -->
+    <script src="./script.js"></script>
 </body>
 </html>
