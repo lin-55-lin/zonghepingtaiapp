@@ -36,11 +36,10 @@
 <body>
     <div class="container">
         <header class="header">
-                      <h1 id="app-title">
+            <h1 id="app-title">
                 综合平台
-                <span class="version-tag" id="versionDisplay"></span>
+                <span class="version-tag" id="versionDisplay">V1.1.0</span>
             </h1>
-            <button id="edit-title-btn" class="edit-title-btn" style="display: none;">✏️</button>
         </header>
         
         <div class="search-bar">
@@ -73,7 +72,7 @@
                 <button id="select-all-btn" class="select-all-btn">全选</button>
                 <button id="wallpaper-btn" class="wallpaper-btn">壁纸</button>
                 <button id="layout-btn" class="layout-btn">布局</button>
-                <button id="sync-btn" class="sync-btn" style="background: #6f42c1;">🔄 同步</button>
+                <button id="sync-btn" class="sync-btn">🔄 同步</button>
             </div>
         </div>
         
@@ -123,58 +122,58 @@
         <button id="add-card-btn" class="add-card-btn">+</button>
     </div>
     
- <!-- 壁纸设置弹窗 -->
-<div id="wallpaper-modal" class="wallpaper-modal" style="display: none;">
-    <div class="wallpaper-modal-content">
-        <div class="wallpaper-modal-header">
-            <h3>壁纸设置</h3>
-            <button id="close-wallpaper-modal" class="close-wallpaper-modal">×</button>
-        </div>
-        <div class="wallpaper-modal-body">
-            <!-- 当前壁纸预览 -->
-            <div class="current-wallpaper" style="margin-bottom: 20px; text-align: center;">
-                <div id="current-wallpaper-preview" style="width: 100%; height: 100px; border-radius: 8px; background-size: cover; background-position: center; border: 2px solid #ddd;"></div>
-                <p style="margin: 10px 0 0; color: #666;">当前壁纸</p>
+    <!-- 壁纸设置弹窗 -->
+    <div id="wallpaper-modal" class="wallpaper-modal" style="display: none;">
+        <div class="wallpaper-modal-content">
+            <div class="wallpaper-modal-header">
+                <h3>壁纸设置</h3>
+                <button id="close-wallpaper-modal" class="close-wallpaper-modal">×</button>
             </div>
-            
-            <div class="wallpaper-options">
-                <!-- 上传新壁纸 -->
-                <div class="wallpaper-option">
-                    <h4>📤 上传新壁纸</h4>
-                    <div class="upload-area" style="border: 2px dashed #ccc; padding: 20px; text-align: center; border-radius: 8px; cursor: pointer;" onclick="document.getElementById('wallpaper-upload').click()">
-                        <p>点击选择图片或拖拽到这里</p>
-                        <p style="font-size: 12px; color: #999;">支持 JPG、PNG、GIF</p>
-                        <input type="file" id="wallpaper-upload" accept="image/*" style="display: none;">
-                    </div>
+            <div class="wallpaper-modal-body">
+                <!-- 当前壁纸预览 -->
+                <div class="current-wallpaper" style="margin-bottom: 20px; text-align: center;">
+                    <div id="current-wallpaper-preview" style="width: 100%; height: 100px; border-radius: 8px; background-size: cover; background-position: center; border: 2px solid #ddd;"></div>
+                    <p style="margin: 10px 0 0; color: #666;">当前壁纸</p>
                 </div>
                 
-                <!-- 纯色壁纸 -->
-                <div class="wallpaper-option" style="margin-top: 20px;">
-                    <h4>🎨 纯色壁纸</h4>
-                    <div class="color-grid" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; margin-top: 10px;">
-                        <div class="color-option" data-color="#ffffff" style="background-color: #ffffff; width: 100%; aspect-ratio: 1; border-radius: 4px; cursor: pointer; border: 2px solid transparent;"></div>
-                        <div class="color-option" data-color="#f0f0f0" style="background-color: #f0f0f0;"></div>
-                        <div class="color-option" data-color="#e0e0e0" style="background-color: #e0e0e0;"></div>
-                        <div class="color-option" data-color="#d0d0d0" style="background-color: #d0d0d0;"></div>
-                        <div class="color-option" data-color="#c0c0c0" style="background-color: #c0c0c0;"></div>
-                        <div class="color-option" data-color="#a0a0a0" style="background-color: #a0a0a0;"></div>
-                        <div class="color-option" data-color="#808080" style="background-color: #808080;"></div>
-                        <div class="color-option" data-color="#606060" style="background-color: #606060;"></div>
-                        <div class="color-option" data-color="#404040" style="background-color: #404040;"></div>
-                        <div class="color-option" data-color="#202020" style="background-color: #202020;"></div>
-                        <div class="color-option" data-color="#000000" style="background-color: #000000;"></div>
-                        <div class="color-option" data-color="#ff6b6b" style="background-color: #ff6b6b;"></div>
-                        <div class="color-option" data-color="#4ecdc4" style="background-color: #4ecdc4;"></div>
-                        <div class="color-option" data-color="#45b7d1" style="background-color: #45b7d1;"></div>
-                        <div class="color-option" data-color="#96ceb4" style="background-color: #96ceb4;"></div>
-                        <div class="color-option" data-color="#feca57" style="background-color: #feca57;"></div>
+                <div class="wallpaper-options">
+                    <!-- 上传新壁纸 -->
+                    <div class="wallpaper-option">
+                        <h4>📤 上传新壁纸</h4>
+                        <div class="upload-area" style="border: 2px dashed #ccc; padding: 20px; text-align: center; border-radius: 8px; cursor: pointer;" onclick="document.getElementById('wallpaper-upload').click()">
+                            <p>点击选择图片或拖拽到这里</p>
+                            <p style="font-size: 12px; color: #999;">支持 JPG、PNG、GIF</p>
+                            <input type="file" id="wallpaper-upload" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <!-- 纯色壁纸 -->
+                    <div class="wallpaper-option" style="margin-top: 20px;">
+                        <h4>🎨 纯色壁纸</h4>
+                        <div class="color-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 10px;">
+                            <div class="color-option" data-color="#ffffff" style="background-color: #ffffff; width: 100%; aspect-ratio: 1; border-radius: 4px; cursor: pointer; border: 2px solid transparent;"></div>
+                            <div class="color-option" data-color="#f0f0f0" style="background-color: #f0f0f0;"></div>
+                            <div class="color-option" data-color="#e0e0e0" style="background-color: #e0e0e0;"></div>
+                            <div class="color-option" data-color="#d0d0d0" style="background-color: #d0d0d0;"></div>
+                            <div class="color-option" data-color="#c0c0c0" style="background-color: #c0c0c0;"></div>
+                            <div class="color-option" data-color="#a0a0a0" style="background-color: #a0a0a0;"></div>
+                            <div class="color-option" data-color="#808080" style="background-color: #808080;"></div>
+                            <div class="color-option" data-color="#606060" style="background-color: #606060;"></div>
+                            <div class="color-option" data-color="#404040" style="background-color: #404040;"></div>
+                            <div class="color-option" data-color="#202020" style="background-color: #202020;"></div>
+                            <div class="color-option" data-color="#000000" style="background-color: #000000;"></div>
+                            <div class="color-option" data-color="#ff6b6b" style="background-color: #ff6b6b;"></div>
+                            <div class="color-option" data-color="#4ecdc4" style="background-color: #4ecdc4;"></div>
+                            <div class="color-option" data-color="#45b7d1" style="background-color: #45b7d1;"></div>
+                            <div class="color-option" data-color="#96ceb4" style="background-color: #96ceb4;"></div>
+                            <div class="color-option" data-color="#feca57" style="background-color: #feca57;"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
+    
     <!-- 布局设置弹窗 -->
     <div id="layout-modal" class="layout-modal" style="display: none;">
         <div class="layout-modal-content">
@@ -229,16 +228,16 @@
 
     <script>
         // ============ 配置 ============
-        const APP_VERSION = 'v3.0.0';
+        const APP_VERSION = 'v1.1.0';
         const REPO_OWNER = 'lin-55-lin';        // 改成你的GitHub用户名
         const REPO_NAME = 'zonghepingtaiapp';   // 改成你的仓库名
         // ==============================
 
         // 显示版本
-        document.getElementById('versionDisplay').textContent = 'v' + APP_VERSION;
+        document.getElementById('versionDisplay').textContent = 'V' + APP_VERSION;
 
-       // GitHub Token - 直接写死，所有人都用这一个
-const GITHUB_TOKEN = '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';
+        // GitHub Token - 直接写死，所有人都用这一个
+        const GITHUB_TOKEN = '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';
 
         // ============ 数据管理 ============
         
@@ -267,31 +266,48 @@ const GITHUB_TOKEN = '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';
                 const wallpaper = issues.find(i => i.title === '【壁纸配置】');
                 const layout = issues.find(i => i.title === '【布局配置】');
                 
-               // 应用壁纸
-if (wallpaper) {
-    try {
-        const wallpaperData = JSON.parse(wallpaper.body);
-        if (wallpaperData.type === 'image') {
-            document.body.style.backgroundImage = `url(${wallpaperData.value})`;
-            document.body.style.backgroundSize = 'cover';
-            document.body.style.backgroundPosition = 'center';
-            document.body.style.backgroundRepeat = 'no-repeat';
-        } else {
-            document.body.style.backgroundImage = 'none';
-            document.body.style.backgroundColor = wallpaperData.value;
-        }
-    } catch (e) {
-        console.error('解析壁纸数据失败:', e);
-    }
-}
+                // 应用壁纸
+                if (wallpaper) {
+                    try {
+                        const wallpaperData = JSON.parse(wallpaper.body);
+                        if (wallpaperData.type === 'image') {
+                            document.body.style.backgroundImage = `url(${wallpaperData.value})`;
+                            document.body.style.backgroundSize = 'cover';
+                            document.body.style.backgroundPosition = 'center';
+                            document.body.style.backgroundRepeat = 'no-repeat';
+                        } else {
+                            document.body.style.backgroundImage = 'none';
+                            document.body.style.backgroundColor = wallpaperData.value;
+                        }
+                    } catch (e) {
+                        console.error('解析壁纸数据失败:', e);
+                    }
+                }
                 
                 // 应用布局
                 if (layout) {
-                    applyLayout(layout.body);
+                    try {
+                        const layoutData = JSON.parse(layout.body);
+                        applyLayoutSettings(layoutData);
+                    } catch (e) {
+                        console.error('解析布局数据失败:', e);
+                    }
                 }
                 
-                // 显示卡片
-                displayCards(cards);
+                // 将卡片数据转换为全局变量格式
+                window.cards = cards.map(issue => {
+                    const parts = issue.body.split('|');
+                    return {
+                        id: issue.number,
+                        name: parts[0] || '',
+                        website: parts[1] || '',
+                        category: parts[2] || '其他',
+                        icon: parts[3] || '🔗'
+                    };
+                });
+                
+                // 触发卡片更新事件
+                document.dispatchEvent(new CustomEvent('cardsUpdated', { detail: window.cards }));
                 
                 showSyncStatus('加载完成', true);
             } catch (error) {
@@ -299,46 +315,12 @@ if (wallpaper) {
             }
         }
 
-        // 显示卡片
-        function displayCards(cardIssues) {
+        // 应用布局设置
+        function applyLayoutSettings(settings) {
             const container = document.getElementById('ai-cards');
-            
-            if (!cardIssues || cardIssues.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">暂无卡片，点击右下角 + 添加</div>';
-                return;
+            if (container && settings.columns) {
+                container.style.gridTemplateColumns = `repeat(${settings.columns}, 1fr)`;
             }
-            
-            let html = '';
-            cardIssues.forEach(issue => {
-                // 解析卡片数据 (格式: 名称|网址|分类|图标)
-                const [name, url, category, icon = '🔗'] = issue.body.split('|');
-                html += `
-                    <div class="ai-card" data-id="${issue.number}" data-category="${category || '其他'}">
-                        <div class="card-header">
-                            <span class="card-icon">${icon}</span>
-                            <h3>${name}</h3>
-                        </div>
-                        <div class="card-body">
-                            <a href="${url}" target="_blank">${url}</a>
-                        </div>
-                        <div class="card-footer">
-                            <span class="category-tag">${category || '其他'}</span>
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        // 应用壁纸
-        function applyWallpaper(color) {
-            document.body.style.backgroundColor = color || '#f5f5f5';
-        }
-
-        // 应用布局
-        function applyLayout(layoutData) {
-            // 这里实现你的布局逻辑
-            console.log('应用布局:', layoutData);
         }
 
         // 保存卡片
@@ -370,8 +352,37 @@ if (wallpaper) {
             }
         }
 
+        // 更新卡片
+        async function updateCard(cardId, name, url, category, icon = '') {
+            try {
+                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${cardId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: `【卡片】${name}`,
+                        body: `${name}|${url}|${category}|${icon}`
+                    })
+                });
+                
+                if (response.ok) {
+                    showSyncStatus('卡片更新成功！', true);
+                    return true;
+                } else {
+                    const err = await response.json();
+                    showSyncStatus('更新失败: ' + err.message, false);
+                    return false;
+                }
+            } catch (error) {
+                showSyncStatus('网络错误', false);
+                return false;
+            }
+        }
+
         // 删除卡片
-        async function deleteCard(issueNumber) {
+        async function deleteCardById(issueNumber) {
             try {
                 const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${issueNumber}`, {
                     method: 'PATCH',
@@ -394,13 +405,14 @@ if (wallpaper) {
             }
         }
 
-        // 保存壁纸
-        async function saveWallpaper(color) {
+        // 保存壁纸到GitHub
+        async function saveWallpaperToGitHub(wallpaperData) {
             try {
-                // 查找是否已有壁纸配置
                 const searchResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all&_t=${Date.now()}`);
                 const issues = await searchResponse.json();
                 const existing = issues.find(i => i.title === '【壁纸配置】');
+                
+                const dataToSave = JSON.stringify(wallpaperData);
                 
                 let response;
                 if (existing) {
@@ -411,7 +423,7 @@ if (wallpaper) {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            body: color
+                            body: dataToSave
                         })
                     });
                 } else {
@@ -423,17 +435,20 @@ if (wallpaper) {
                         },
                         body: JSON.stringify({
                             title: '【壁纸配置】',
-                            body: color
+                            body: dataToSave
                         })
                     });
                 }
                 
                 if (response.ok) {
-                    showSyncStatus('壁纸已更新', true);
                     return true;
+                } else {
+                    const err = await response.json();
+                    showSyncStatus('保存失败: ' + err.message, false);
+                    return false;
                 }
             } catch (error) {
-                showSyncStatus('壁纸保存失败', false);
+                showSyncStatus('网络错误', false);
                 return false;
             }
         }
@@ -501,9 +516,16 @@ if (wallpaper) {
             document.querySelectorAll('.color-option').forEach(option => {
                 option.addEventListener('click', async function() {
                     const color = this.dataset.color;
-                    if (await saveWallpaper(color)) {
-                        applyWallpaper(color);
+                    const success = await saveWallpaperToGitHub({
+                        type: 'solid',
+                        value: color
+                    });
+                    
+                    if (success) {
+                        document.body.style.backgroundImage = 'none';
+                        document.body.style.backgroundColor = color;
                         document.getElementById('wallpaper-modal').style.display = 'none';
+                        showSyncStatus('壁纸已更新', true);
                     }
                 });
             });

@@ -42,8 +42,6 @@ const cancelBtn = document.getElementById('cancel-btn');
 const cardCategory = document.getElementById('card-category');
 const customCategoryGroup = document.getElementById('custom-category-group');
 const customCategoryInput = document.getElementById('custom-category');
-const appTitle = document.getElementById('app-title');
-const editTitleBtn = document.getElementById('edit-title-btn');
 const batchDeleteBtn = document.getElementById('batch-delete-btn');
 const selectAllBtn = document.getElementById('select-all-btn');
 
@@ -164,7 +162,7 @@ function setupEventListeners() {
     if (wallpaperBtn) {
         wallpaperBtn.addEventListener('click', function() {
             document.getElementById('wallpaper-modal').style.display = 'flex';
-            loadSavedWallpapers();
+            loadCurrentWallpaperPreview();
         });
     }
     
@@ -175,6 +173,12 @@ function setupEventListeners() {
             document.getElementById('layout-modal').style.display = 'flex';
             loadLayoutSettings();
         });
+    }
+    
+    // 同步按钮
+    const syncBtn = document.getElementById('sync-btn');
+    if (syncBtn) {
+        syncBtn.addEventListener('click', forceRefresh);
     }
     
     // 关闭弹窗按钮
@@ -233,8 +237,7 @@ function renderCards(cards) {
     
     if (searchTerm) {
         filteredCards = filteredCards.filter(card => 
-            card.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            card.website.toLowerCase().includes(searchTerm.toLowerCase())
+            card.name.toLowerCase().includes(searchTerm.toLowerCase())
         );
     }
     
@@ -250,33 +253,31 @@ function renderCards(cards) {
     // 设置网格列数
     aiCardsContainer.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
     
-    // 生成卡片HTML
+    // 生成卡片HTML - 只显示卡片名称
     let html = '';
     filteredCards.forEach(card => {
         const icon = card.icon || '🔗';
         const category = card.category || '其他';
         
-        // 管理模式下的复选框
+        // 管理模式下的复选框和删除按钮
         const checkboxHtml = isManageMode ? 
             `<input type="checkbox" class="card-checkbox" data-id="${card.id}" onchange="handleCardCheck(this)">` : '';
         
-        // 管理模式下的删除按钮
         const deleteBtnHtml = isManageMode ?
             `<button class="delete-btn" onclick="deleteCard('${card.id}')">×</button>` : '';
         
+        // 编辑按钮
+        const editBtnHtml = isManageMode ?
+            `<button class="edit-btn" onclick="editCard('${card.id}')">✏️</button>` : '';
+        
         html += `
-            <div class="ai-card" data-id="${card.id}" data-category="${category}" onclick="handleCardClick('${card.id}', '${card.website}')">
+            <div class="ai-card" data-id="${card.id}" data-category="${category}" data-website="${card.website}" onclick="handleCardClick('${card.website}')" style="background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(5px);">
                 <div class="card-header">
                     ${checkboxHtml}
                     ${deleteBtnHtml}
+                    ${editBtnHtml}
                     <span class="card-icon">${icon}</span>
                     <h3>${card.name}</h3>
-                </div>
-                <div class="card-body">
-                    <a href="${card.website}" target="_blank" onclick="event.stopPropagation()">${card.website}</a>
-                </div>
-                <div class="card-footer">
-                    <span class="category-tag">${category}</span>
                 </div>
             </div>
         `;
@@ -291,11 +292,97 @@ function renderCards(cards) {
     });
 }
 
-// 卡片点击处理
-function handleCardClick(cardId, website) {
-    if (!isManageMode) {
+// 卡片点击处理 - 直接打开网址
+function handleCardClick(website) {
+    if (!isManageMode && website) {
         window.open(website, '_blank');
     }
+}
+
+// 编辑卡片
+function editCard(cardId) {
+    if (!isManageMode) return;
+    
+    // 找到卡片数据
+    const card = window.cards.find(c => c.id == cardId);
+    if (!card) return;
+    
+    // 填充表单
+    document.getElementById('card-name').value = card.name;
+    document.getElementById('card-website').value = card.website;
+    document.getElementById('card-icon').value = card.icon || '🔗';
+    
+    // 处理分类
+    const categorySelect = document.getElementById('card-category');
+    const customGroup = document.getElementById('custom-category-group');
+    const customInput = document.getElementById('custom-category');
+    
+    // 检查是否是预设分类
+    const presetCategories = ['text', 'image', 'voice', 'office'];
+    if (presetCategories.includes(card.category)) {
+        categorySelect.value = card.category;
+        customGroup.style.display = 'none';
+        customInput.required = false;
+    } else {
+        categorySelect.value = 'custom';
+        customGroup.style.display = 'block';
+        customInput.value = card.category;
+        customInput.required = true;
+    }
+    
+    // 修改表单标题和按钮
+    addCardForm.querySelector('h3').textContent = '编辑卡片';
+    const submitBtn = addCardForm.querySelector('.submit-btn');
+    submitBtn.textContent = '保存修改';
+    
+    // 移除原提交事件，添加编辑提交事件
+    newCardForm.onsubmit = async function(e) {
+        e.preventDefault();
+        
+        const name = document.getElementById('card-name').value.trim();
+        const website = document.getElementById('card-website').value.trim();
+        const category = document.getElementById('card-category').value;
+        const customCategory = document.getElementById('custom-category').value.trim();
+        const icon = document.getElementById('card-icon').value.trim() || '🔗';
+        
+        if (!name || !website || !category) {
+            alert('请填写所有必填字段！');
+            return;
+        }
+        
+        let finalCategory = category;
+        if (category === 'custom') {
+            if (!customCategory) {
+                alert('请填写自定义分类名称！');
+                return;
+            }
+            finalCategory = customCategory;
+        }
+        
+        // 更新卡片数据
+        if (typeof updateCard === 'function') {
+            const success = await updateCard(cardId, name, website, finalCategory, icon);
+            if (success) {
+                // 重置表单
+                newCardForm.reset();
+                addCardForm.style.display = 'none';
+                addCardBtn.style.display = 'block';
+                customGroup.style.display = 'none';
+                
+                // 恢复表单
+                addCardForm.querySelector('h3').textContent = '添加新软件卡片';
+                submitBtn.textContent = '添加卡片';
+                newCardForm.onsubmit = null; // 移除自定义事件
+                
+                // 重新加载数据
+                await loadAllData();
+                renderCategoryTabs();
+            }
+        }
+    };
+    
+    addCardForm.style.display = 'block';
+    addCardBtn.style.display = 'none';
 }
 
 // 卡片复选框处理
@@ -464,22 +551,19 @@ function toggleManageMode() {
     isManageMode = !isManageMode;
     
     const managePanel = document.getElementById('manage-panel');
-    const editTitleBtn = document.getElementById('edit-title-btn');
     
     if (isManageMode) {
         // 进入管理模式
         manageModeBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
         manageModeBtn.style.background = 'rgba(255, 123, 0, 0.1)';
         manageModeBtn.style.color = '#ff7b00';
-        managePanel.style.display = 'flex';  // 改为 flex 显示
-        if (editTitleBtn) editTitleBtn.style.display = 'inline-block';
+        managePanel.style.display = 'flex';
     } else {
         // 退出管理模式
         manageModeBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
         manageModeBtn.style.background = 'rgba(255, 255, 255, 0.8)';
         manageModeBtn.style.color = '#666';
         managePanel.style.display = 'none';
-        if (editTitleBtn) editTitleBtn.style.display = 'none';
     }
     
     // 重新渲染卡片以显示/隐藏管理按钮
@@ -650,14 +734,21 @@ async function handleExport() {
     URL.revokeObjectURL(url);
 }
 
-// ============ 壁纸功能（GitHub同步版） ============
+// ============ 强制刷新 ============
+async function forceRefresh() {
+    if (typeof loadAllData === 'function') {
+        await loadAllData();
+        showSyncStatus('刷新完成', true);
+    }
+}
+
+// ============ 壁纸功能 ============
 
 function setupWallpaperFunctionality() {
     const wallpaperModal = document.getElementById('wallpaper-modal');
     const closeBtn = document.getElementById('close-wallpaper-modal');
     const uploadInput = document.getElementById('wallpaper-upload');
     const colorOptions = document.querySelectorAll('.color-option');
-    const previewDiv = document.getElementById('current-wallpaper-preview');
     
     // 关闭按钮
     if (closeBtn) {
@@ -674,12 +765,10 @@ function setupWallpaperFunctionality() {
             
             const reader = new FileReader();
             reader.onload = async function(e) {
-                const imageData = e.target.result; // base64格式
+                const imageData = e.target.result;
                 
-                // 显示上传中状态
                 showSyncStatus('正在上传壁纸...', true);
                 
-                // 保存到GitHub
                 const success = await saveWallpaperToGitHub({
                     type: 'image',
                     value: imageData,
@@ -687,21 +776,13 @@ function setupWallpaperFunctionality() {
                 });
                 
                 if (success) {
-                    // 应用壁纸
                     document.body.style.backgroundImage = `url(${imageData})`;
                     document.body.style.backgroundSize = 'cover';
                     document.body.style.backgroundPosition = 'center';
                     document.body.style.backgroundRepeat = 'no-repeat';
                     
-                    // 更新预览
-                    if (previewDiv) {
-                        previewDiv.style.backgroundImage = `url(${imageData})`;
-                        previewDiv.style.backgroundColor = 'transparent';
-                    }
+                    showSyncStatus('壁纸已同步', true);
                     
-                    showSyncStatus('壁纸已同步到所有设备', true);
-                    
-                    // 延迟关闭弹窗
                     setTimeout(() => {
                         wallpaperModal.style.display = 'none';
                     }, 1000);
@@ -716,7 +797,6 @@ function setupWallpaperFunctionality() {
         option.addEventListener('click', async function() {
             const color = this.dataset.color;
             
-            // 保存到GitHub
             showSyncStatus('正在保存壁纸...', true);
             const success = await saveWallpaperToGitHub({
                 type: 'solid',
@@ -724,51 +804,30 @@ function setupWallpaperFunctionality() {
             });
             
             if (success) {
-                // 应用颜色
                 document.body.style.backgroundImage = 'none';
                 document.body.style.backgroundColor = color;
                 
-                // 更新预览
-                if (previewDiv) {
-                    previewDiv.style.backgroundImage = 'none';
-                    previewDiv.style.backgroundColor = color;
-                }
+                showSyncStatus('壁纸已同步', true);
                 
-                showSyncStatus('壁纸已同步到所有设备', true);
-                
-                // 延迟关闭弹窗
                 setTimeout(() => {
                     wallpaperModal.style.display = 'none';
                 }, 1000);
             }
         });
     });
-    
-    // 打开弹窗时加载当前壁纸
-    const wallpaperBtn = document.getElementById('wallpaper-btn');
-    if (wallpaperBtn) {
-        wallpaperBtn.addEventListener('click', function() {
-            // 加载当前壁纸预览
-            loadCurrentWallpaperPreview();
-            wallpaperModal.style.display = 'flex';
-        });
-    }
 }
 
 // 保存壁纸到GitHub
 async function saveWallpaperToGitHub(wallpaperData) {
     try {
-        // 查找是否已有壁纸配置
         const searchResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all&_t=${Date.now()}`);
         const issues = await searchResponse.json();
         const existing = issues.find(i => i.title === '【壁纸配置】');
         
-        // 准备要保存的数据
         const dataToSave = JSON.stringify(wallpaperData);
         
         let response;
         if (existing) {
-            // 更新现有壁纸
             response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${existing.number}`, {
                 method: 'PATCH',
                 headers: {
@@ -780,7 +839,6 @@ async function saveWallpaperToGitHub(wallpaperData) {
                 })
             });
         } else {
-            // 创建新壁纸配置
             response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues`, {
                 method: 'POST',
                 headers: {
@@ -815,7 +873,6 @@ async function loadCurrentWallpaperPreview() {
     if (!previewDiv) return;
     
     try {
-        // 从GitHub获取壁纸配置
         const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all&_t=${Date.now()}`);
         const issues = await response.json();
         const wallpaperIssue = issues.find(i => i.title === '【壁纸配置】');
@@ -830,51 +887,15 @@ async function loadCurrentWallpaperPreview() {
                 previewDiv.style.backgroundImage = 'none';
                 previewDiv.style.backgroundColor = wallpaperData.value;
             }
-        } else {
-            // 默认壁纸
-            previewDiv.style.backgroundImage = 'none';
-            previewDiv.style.backgroundColor = '#f5f5f5';
         }
     } catch (error) {
         console.error('加载壁纸预览失败:', error);
-        previewDiv.style.backgroundImage = 'none';
-        previewDiv.style.backgroundColor = '#f5f5f5';
-    }
-}
-
-// 应用壁纸（在loadAllData中调用）
-async function applyWallpaperFromGitHub() {
-    try {
-        const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all&_t=${Date.now()}`);
-        const issues = await response.json();
-        const wallpaperIssue = issues.find(i => i.title === '【壁纸配置】');
-        
-        if (wallpaperIssue) {
-            const wallpaperData = JSON.parse(wallpaperIssue.body);
-            
-            if (wallpaperData.type === 'image') {
-                document.body.style.backgroundImage = `url(${wallpaperData.value})`;
-                document.body.style.backgroundSize = 'cover';
-                document.body.style.backgroundPosition = 'center';
-                document.body.style.backgroundRepeat = 'no-repeat';
-            } else {
-                document.body.style.backgroundImage = 'none';
-                document.body.style.backgroundColor = wallpaperData.value;
-            }
-        } else {
-            // 默认背景
-            document.body.style.backgroundImage = 'none';
-            document.body.style.backgroundColor = '#f5f5f5';
-        }
-    } catch (error) {
-        console.error('应用壁纸失败:', error);
     }
 }
 
 // ============ 布局功能 ============
 
 function setupLayoutFunctionality() {
-    // 快捷布局按钮
     document.querySelectorAll('.layout-btn-quick').forEach(btn => {
         btn.addEventListener('click', function() {
             const layout = this.dataset.layout;
@@ -888,7 +909,6 @@ function setupLayoutFunctionality() {
         });
     });
     
-    // 应用设置按钮
     const applyLayoutBtn = document.getElementById('apply-layout');
     if (applyLayoutBtn) {
         applyLayoutBtn.addEventListener('click', function() {
@@ -897,13 +917,11 @@ function setupLayoutFunctionality() {
         });
     }
     
-    // 重置按钮
     const resetLayoutBtn = document.getElementById('reset-layout');
     if (resetLayoutBtn) {
         resetLayoutBtn.addEventListener('click', resetLayoutSettings);
     }
     
-    // 滑块显示
     setupLayoutInputs();
 }
 
@@ -985,7 +1003,6 @@ function loadLayoutSettings() {
     if (Object.keys(savedSettings).length > 0) {
         applyLayoutSettings(savedSettings);
         
-        // 更新输入框值
         const rowsInput = document.getElementById('rows-input');
         const columnsInput = document.getElementById('columns-input');
         const iconSizeInput = document.getElementById('icon-size-slider');
@@ -1042,14 +1059,15 @@ function resetLayoutSettings() {
     });
 }
 
-// ============ 暴露全局变量供index.html使用 ============
+// ============ 暴露全局变量 ============
 
-// 让index.html中的函数可以访问cards数据
 window.renderCards = renderCards;
 window.deleteCard = deleteCard;
+window.editCard = editCard;
 window.switchCategory = switchCategory;
 window.handleCardCheck = handleCardCheck;
 window.handleCardClick = handleCardClick;
+window.forceRefresh = forceRefresh;
 
 // 监听cards更新
 document.addEventListener('cardsUpdated', function(e) {
