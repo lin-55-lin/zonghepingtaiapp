@@ -36,11 +36,7 @@
 <body>
     <div class="container">
         <header class="header">
-            <div class="contact-info">
-                <span>版权归我，创意归你！有神仙建议？快砸邮件：</span>
-                <a href="mailto:291743302@qq.com">291743302@qq.com</a>
-            </div>
-            <h1 id="app-title">
+                      <h1 id="app-title">
                 综合平台
                 <span class="version-tag" id="versionDisplay"></span>
             </h1>
@@ -127,52 +123,58 @@
         <button id="add-card-btn" class="add-card-btn">+</button>
     </div>
     
-    <!-- 壁纸设置弹窗 -->
-    <div id="wallpaper-modal" class="wallpaper-modal" style="display: none;">
-        <div class="wallpaper-modal-content">
-            <div class="wallpaper-modal-header">
-                <h3>壁纸设置</h3>
-                <button id="close-wallpaper-modal" class="close-wallpaper-modal">×</button>
+ <!-- 壁纸设置弹窗 -->
+<div id="wallpaper-modal" class="wallpaper-modal" style="display: none;">
+    <div class="wallpaper-modal-content">
+        <div class="wallpaper-modal-header">
+            <h3>壁纸设置</h3>
+            <button id="close-wallpaper-modal" class="close-wallpaper-modal">×</button>
+        </div>
+        <div class="wallpaper-modal-body">
+            <!-- 当前壁纸预览 -->
+            <div class="current-wallpaper" style="margin-bottom: 20px; text-align: center;">
+                <div id="current-wallpaper-preview" style="width: 100%; height: 100px; border-radius: 8px; background-size: cover; background-position: center; border: 2px solid #ddd;"></div>
+                <p style="margin: 10px 0 0; color: #666;">当前壁纸</p>
             </div>
-            <div class="wallpaper-modal-body">
-                <div class="wallpaper-options">
-                    <div class="wallpaper-option" data-type="local">
-                        <h4>本地壁纸</h4>
-                        <div class="local-wallpapers" style="display: none;">
-                            <div class="wallpaper-grid">
-                                <!-- 本地壁纸将通过JavaScript动态生成 -->
-                            </div>
-                            <button class="add-wallpaper-btn">+ 添加壁纸</button>
-                        </div>
+            
+            <div class="wallpaper-options">
+                <!-- 上传新壁纸 -->
+                <div class="wallpaper-option">
+                    <h4>📤 上传新壁纸</h4>
+                    <div class="upload-area" style="border: 2px dashed #ccc; padding: 20px; text-align: center; border-radius: 8px; cursor: pointer;" onclick="document.getElementById('wallpaper-upload').click()">
+                        <p>点击选择图片或拖拽到这里</p>
+                        <p style="font-size: 12px; color: #999;">支持 JPG、PNG、GIF</p>
+                        <input type="file" id="wallpaper-upload" accept="image/*" style="display: none;">
                     </div>
-                    <div class="wallpaper-option" data-type="solid">
-                        <h4>纯色壁纸</h4>
-                        <div class="solid-wallpapers" style="display: none;">
-                            <div class="color-grid">
-                                <div class="color-option" data-color="#ffffff" style="background-color: #ffffff;"></div>
-                                <div class="color-option" data-color="#f0f0f0" style="background-color: #f0f0f0;"></div>
-                                <div class="color-option" data-color="#e0e0e0" style="background-color: #e0e0e0;"></div>
-                                <div class="color-option" data-color="#d0d0d0" style="background-color: #d0d0d0;"></div>
-                                <div class="color-option" data-color="#c0c0c0" style="background-color: #c0c0c0;"></div>
-                                <div class="color-option" data-color="#a0a0a0" style="background-color: #a0a0a0;"></div>
-                                <div class="color-option" data-color="#808080" style="background-color: #808080;"></div>
-                                <div class="color-option" data-color="#606060" style="background-color: #606060;"></div>
-                                <div class="color-option" data-color="#404040" style="background-color: #404040;"></div>
-                                <div class="color-option" data-color="#202020" style="background-color: #202020;"></div>
-                                <div class="color-option" data-color="#000000" style="background-color: #000000;"></div>
-                                <div class="color-option" data-color="#ff6b6b" style="background-color: #ff6b6b;"></div>
-                                <div class="color-option" data-color="#4ecdc4" style="background-color: #4ecdc4;"></div>
-                                <div class="color-option" data-color="#45b7d1" style="background-color: #45b7d1;"></div>
-                                <div class="color-option" data-color="#96ceb4" style="background-color: #96ceb4;"></div>
-                                <div class="color-option" data-color="#feca57" style="background-color: #feca57;"></div>
-                            </div>
-                        </div>
+                </div>
+                
+                <!-- 纯色壁纸 -->
+                <div class="wallpaper-option" style="margin-top: 20px;">
+                    <h4>🎨 纯色壁纸</h4>
+                    <div class="color-grid" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; margin-top: 10px;">
+                        <div class="color-option" data-color="#ffffff" style="background-color: #ffffff; width: 100%; aspect-ratio: 1; border-radius: 4px; cursor: pointer; border: 2px solid transparent;"></div>
+                        <div class="color-option" data-color="#f0f0f0" style="background-color: #f0f0f0;"></div>
+                        <div class="color-option" data-color="#e0e0e0" style="background-color: #e0e0e0;"></div>
+                        <div class="color-option" data-color="#d0d0d0" style="background-color: #d0d0d0;"></div>
+                        <div class="color-option" data-color="#c0c0c0" style="background-color: #c0c0c0;"></div>
+                        <div class="color-option" data-color="#a0a0a0" style="background-color: #a0a0a0;"></div>
+                        <div class="color-option" data-color="#808080" style="background-color: #808080;"></div>
+                        <div class="color-option" data-color="#606060" style="background-color: #606060;"></div>
+                        <div class="color-option" data-color="#404040" style="background-color: #404040;"></div>
+                        <div class="color-option" data-color="#202020" style="background-color: #202020;"></div>
+                        <div class="color-option" data-color="#000000" style="background-color: #000000;"></div>
+                        <div class="color-option" data-color="#ff6b6b" style="background-color: #ff6b6b;"></div>
+                        <div class="color-option" data-color="#4ecdc4" style="background-color: #4ecdc4;"></div>
+                        <div class="color-option" data-color="#45b7d1" style="background-color: #45b7d1;"></div>
+                        <div class="color-option" data-color="#96ceb4" style="background-color: #96ceb4;"></div>
+                        <div class="color-option" data-color="#feca57" style="background-color: #feca57;"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
+</div>
+
     <!-- 布局设置弹窗 -->
     <div id="layout-modal" class="layout-modal" style="display: none;">
         <div class="layout-modal-content">
@@ -236,7 +238,7 @@
         document.getElementById('versionDisplay').textContent = 'v' + APP_VERSION;
 
        // GitHub Token - 直接写死，所有人都用这一个
-const GITHUB_TOKEN = 'gphp_qsBPM18VqnmSKRCX2koAeeMpSVdUhH3qWklwd';
+const GITHUB_TOKEN = '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';
 
         // ============ 数据管理 ============
         
@@ -265,10 +267,23 @@ const GITHUB_TOKEN = 'gphp_qsBPM18VqnmSKRCX2koAeeMpSVdUhH3qWklwd';
                 const wallpaper = issues.find(i => i.title === '【壁纸配置】');
                 const layout = issues.find(i => i.title === '【布局配置】');
                 
-                // 应用壁纸
-                if (wallpaper) {
-                    applyWallpaper(wallpaper.body);
-                }
+               // 应用壁纸
+if (wallpaper) {
+    try {
+        const wallpaperData = JSON.parse(wallpaper.body);
+        if (wallpaperData.type === 'image') {
+            document.body.style.backgroundImage = `url(${wallpaperData.value})`;
+            document.body.style.backgroundSize = 'cover';
+            document.body.style.backgroundPosition = 'center';
+            document.body.style.backgroundRepeat = 'no-repeat';
+        } else {
+            document.body.style.backgroundImage = 'none';
+            document.body.style.backgroundColor = wallpaperData.value;
+        }
+    } catch (e) {
+        console.error('解析壁纸数据失败:', e);
+    }
+}
                 
                 // 应用布局
                 if (layout) {

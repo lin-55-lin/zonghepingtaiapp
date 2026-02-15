@@ -463,13 +463,18 @@ function performSearch() {
 function toggleManageMode() {
     isManageMode = !isManageMode;
     
+    const managePanel = document.getElementById('manage-panel');
+    const editTitleBtn = document.getElementById('edit-title-btn');
+    
     if (isManageMode) {
+        // 进入管理模式
         manageModeBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
         manageModeBtn.style.background = 'rgba(255, 123, 0, 0.1)';
         manageModeBtn.style.color = '#ff7b00';
-        managePanel.style.display = 'block';
+        managePanel.style.display = 'flex';  // 改为 flex 显示
         if (editTitleBtn) editTitleBtn.style.display = 'inline-block';
     } else {
+        // 退出管理模式
         manageModeBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
         manageModeBtn.style.background = 'rgba(255, 255, 255, 0.8)';
         manageModeBtn.style.color = '#666';
@@ -645,41 +650,225 @@ async function handleExport() {
     URL.revokeObjectURL(url);
 }
 
-// ============ 壁纸功能 ============
+// ============ 壁纸功能（GitHub同步版） ============
 
 function setupWallpaperFunctionality() {
+    const wallpaperModal = document.getElementById('wallpaper-modal');
+    const closeBtn = document.getElementById('close-wallpaper-modal');
+    const uploadInput = document.getElementById('wallpaper-upload');
     const colorOptions = document.querySelectorAll('.color-option');
+    const previewDiv = document.getElementById('current-wallpaper-preview');
     
-    colorOptions.forEach(color => {
-        color.addEventListener('click', async function() {
-            const colorValue = this.dataset.color;
+    // 关闭按钮
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            wallpaperModal.style.display = 'none';
+        });
+    }
+    
+    // 上传图片
+    if (uploadInput) {
+        uploadInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
             
-            // 移除其他颜色的激活状态
-            colorOptions.forEach(c => c.classList.remove('active'));
-            this.classList.add('active');
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const imageData = e.target.result; // base64格式
+                
+                // 显示上传中状态
+                showSyncStatus('正在上传壁纸...', true);
+                
+                // 保存到GitHub
+                const success = await saveWallpaperToGitHub({
+                    type: 'image',
+                    value: imageData,
+                    filename: file.name
+                });
+                
+                if (success) {
+                    // 应用壁纸
+                    document.body.style.backgroundImage = `url(${imageData})`;
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundPosition = 'center';
+                    document.body.style.backgroundRepeat = 'no-repeat';
+                    
+                    // 更新预览
+                    if (previewDiv) {
+                        previewDiv.style.backgroundImage = `url(${imageData})`;
+                        previewDiv.style.backgroundColor = 'transparent';
+                    }
+                    
+                    showSyncStatus('壁纸已同步到所有设备', true);
+                    
+                    // 延迟关闭弹窗
+                    setTimeout(() => {
+                        wallpaperModal.style.display = 'none';
+                    }, 1000);
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+    
+    // 颜色选择
+    colorOptions.forEach(option => {
+        option.addEventListener('click', async function() {
+            const color = this.dataset.color;
             
             // 保存到GitHub
-            if (typeof saveWallpaper === 'function') {
-                await saveWallpaper(colorValue);
+            showSyncStatus('正在保存壁纸...', true);
+            const success = await saveWallpaperToGitHub({
+                type: 'solid',
+                value: color
+            });
+            
+            if (success) {
+                // 应用颜色
+                document.body.style.backgroundImage = 'none';
+                document.body.style.backgroundColor = color;
+                
+                // 更新预览
+                if (previewDiv) {
+                    previewDiv.style.backgroundImage = 'none';
+                    previewDiv.style.backgroundColor = color;
+                }
+                
+                showSyncStatus('壁纸已同步到所有设备', true);
+                
+                // 延迟关闭弹窗
+                setTimeout(() => {
+                    wallpaperModal.style.display = 'none';
+                }, 1000);
             }
-            
-            // 应用背景色
-            document.body.style.backgroundColor = colorValue;
-            
-            // 关闭弹窗
-            document.getElementById('wallpaper-modal').style.display = 'none';
         });
     });
     
-    // 加载壁纸设置
-    if (typeof loadAllData === 'function') {
-        loadAllData();
+    // 打开弹窗时加载当前壁纸
+    const wallpaperBtn = document.getElementById('wallpaper-btn');
+    if (wallpaperBtn) {
+        wallpaperBtn.addEventListener('click', function() {
+            // 加载当前壁纸预览
+            loadCurrentWallpaperPreview();
+            wallpaperModal.style.display = 'flex';
+        });
     }
 }
 
-// 加载已保存的壁纸
-function loadSavedWallpapers() {
-    // 从GitHub加载，已经在loadAllData中处理
+// 保存壁纸到GitHub
+async function saveWallpaperToGitHub(wallpaperData) {
+    try {
+        // 查找是否已有壁纸配置
+        const searchResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all&_t=${Date.now()}`);
+        const issues = await searchResponse.json();
+        const existing = issues.find(i => i.title === '【壁纸配置】');
+        
+        // 准备要保存的数据
+        const dataToSave = JSON.stringify(wallpaperData);
+        
+        let response;
+        if (existing) {
+            // 更新现有壁纸
+            response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${existing.number}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    body: dataToSave
+                })
+            });
+        } else {
+            // 创建新壁纸配置
+            response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: '【壁纸配置】',
+                    body: dataToSave
+                })
+            });
+        }
+        
+        if (response.ok) {
+            return true;
+        } else {
+            const err = await response.json();
+            console.error('保存壁纸失败:', err);
+            showSyncStatus('保存失败: ' + err.message, false);
+            return false;
+        }
+    } catch (error) {
+        console.error('保存壁纸出错:', error);
+        showSyncStatus('网络错误', false);
+        return false;
+    }
+}
+
+// 加载当前壁纸预览
+async function loadCurrentWallpaperPreview() {
+    const previewDiv = document.getElementById('current-wallpaper-preview');
+    if (!previewDiv) return;
+    
+    try {
+        // 从GitHub获取壁纸配置
+        const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all&_t=${Date.now()}`);
+        const issues = await response.json();
+        const wallpaperIssue = issues.find(i => i.title === '【壁纸配置】');
+        
+        if (wallpaperIssue) {
+            const wallpaperData = JSON.parse(wallpaperIssue.body);
+            
+            if (wallpaperData.type === 'image') {
+                previewDiv.style.backgroundImage = `url(${wallpaperData.value})`;
+                previewDiv.style.backgroundColor = 'transparent';
+            } else {
+                previewDiv.style.backgroundImage = 'none';
+                previewDiv.style.backgroundColor = wallpaperData.value;
+            }
+        } else {
+            // 默认壁纸
+            previewDiv.style.backgroundImage = 'none';
+            previewDiv.style.backgroundColor = '#f5f5f5';
+        }
+    } catch (error) {
+        console.error('加载壁纸预览失败:', error);
+        previewDiv.style.backgroundImage = 'none';
+        previewDiv.style.backgroundColor = '#f5f5f5';
+    }
+}
+
+// 应用壁纸（在loadAllData中调用）
+async function applyWallpaperFromGitHub() {
+    try {
+        const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all&_t=${Date.now()}`);
+        const issues = await response.json();
+        const wallpaperIssue = issues.find(i => i.title === '【壁纸配置】');
+        
+        if (wallpaperIssue) {
+            const wallpaperData = JSON.parse(wallpaperIssue.body);
+            
+            if (wallpaperData.type === 'image') {
+                document.body.style.backgroundImage = `url(${wallpaperData.value})`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+                document.body.style.backgroundRepeat = 'no-repeat';
+            } else {
+                document.body.style.backgroundImage = 'none';
+                document.body.style.backgroundColor = wallpaperData.value;
+            }
+        } else {
+            // 默认背景
+            document.body.style.backgroundImage = 'none';
+            document.body.style.backgroundColor = '#f5f5f5';
+        }
+    } catch (error) {
+        console.error('应用壁纸失败:', error);
+    }
 }
 
 // ============ 布局功能 ============
