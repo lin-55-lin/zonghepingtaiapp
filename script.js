@@ -256,40 +256,32 @@ function renderCards(cards) {
     // 生成卡片HTML - 只显示卡片名称
     let html = '';
     filteredCards.forEach(card => {
-        const icon = card.icon || '🔗';
         const category = card.category || '其他';
         
         // 管理模式下的复选框和删除按钮
         const checkboxHtml = isManageMode ? 
-            `<input type="checkbox" class="card-checkbox" data-id="${card.id}" onchange="handleCardCheck(this)">` : '';
+            `<input type="checkbox" class="card-checkbox" data-id="${card.id}" onchange="handleCardCheck(this)" style="margin-right: 4px;">` : '';
         
         const deleteBtnHtml = isManageMode ?
-            `<button class="delete-btn" onclick="deleteCard('${card.id}')">×</button>` : '';
+            `<button class="delete-btn" onclick="deleteCard('${card.id}')" style="background: none; border: none; color: #ff4444; cursor: pointer; font-size: 16px; padding: 0 4px;">×</button>` : '';
         
         // 编辑按钮
         const editBtnHtml = isManageMode ?
-            `<button class="edit-btn" onclick="editCard('${card.id}')">✏️</button>` : '';
+            `<button class="edit-btn" onclick="editCard('${card.id}')" style="background: none; border: none; color: #4CAF50; cursor: pointer; font-size: 16px; padding: 0 4px;">✏️</button>` : '';
         
-html += `
-    <div class="ai-card" data-id="${card.id}" data-category="${category}" data-website="${card.website}" onclick="handleCardClick('${card.website}')" style="background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(5px); cursor: pointer;">
-        <div class="card-header" style="display: flex; align-items: center; gap: 8px;">
-            ${checkboxHtml}
-            ${deleteBtnHtml}
-            ${editBtnHtml}
-            <span class="card-icon">${icon}</span>
-            <h3 style="margin: 0; flex-grow: 1;">${card.name}</h3>
-        </div>
-    </div>
-`;
+        html += `
+            <div class="ai-card" data-id="${card.id}" data-category="${category}" data-website="${card.website}" onclick="handleCardClick('${card.website}')" style="background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(5px); cursor: pointer; height: 50px; display: flex; align-items: center; border-radius: 8px; overflow: hidden;">
+                <div class="card-header" style="display: flex; align-items: center; gap: 4px; width: 100%; padding: 0 8px;">
+                    ${checkboxHtml}
+                    ${deleteBtnHtml}
+                    ${editBtnHtml}
+                    <span style="flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${card.name}</span>
+                </div>
+            </div>
+        `;
     });
     
     aiCardsContainer.innerHTML = html;
-    
-    // 应用图标大小
-    const iconSize = layoutSettings.iconSize || 100;
-    document.querySelectorAll('.card-icon').forEach(icon => {
-        icon.style.fontSize = iconSize + '%';
-    });
 }
 
 // 卡片点击处理 - 直接打开网址
@@ -310,7 +302,6 @@ function editCard(cardId) {
     // 填充表单
     document.getElementById('card-name').value = card.name;
     document.getElementById('card-website').value = card.website;
-    document.getElementById('card-icon').value = card.icon || '🔗';
     
     // 处理分类
     const categorySelect = document.getElementById('card-category');
@@ -343,7 +334,6 @@ function editCard(cardId) {
         const website = document.getElementById('card-website').value.trim();
         const category = document.getElementById('card-category').value;
         const customCategory = document.getElementById('custom-category').value.trim();
-        const icon = document.getElementById('card-icon').value.trim() || '🔗';
         
         if (!name || !website || !category) {
             alert('请填写所有必填字段！');
@@ -361,7 +351,7 @@ function editCard(cardId) {
         
         // 更新卡片数据
         if (typeof updateCard === 'function') {
-            const success = await updateCard(cardId, name, website, finalCategory, icon);
+            const success = await updateCard(cardId, name, website, finalCategory);
             if (success) {
                 // 重置表单
                 newCardForm.reset();
@@ -424,7 +414,6 @@ async function handleAddCard() {
     const website = document.getElementById('card-website').value.trim();
     const category = document.getElementById('card-category').value;
     const customCategory = document.getElementById('custom-category').value.trim();
-    const icon = document.getElementById('card-icon').value.trim() || '🔗';
     
     if (!name || !website || !category) {
         alert('请填写所有必填字段！');
@@ -443,7 +432,7 @@ async function handleAddCard() {
     
     // 保存到GitHub
     if (typeof saveCard === 'function') {
-        const success = await saveCard(name, website, finalCategory, icon);
+        const success = await saveCard(name, website, finalCategory);
         if (success) {
             // 重置表单
             newCardForm.reset();
@@ -511,6 +500,9 @@ function renderCategoryTabs() {
     });
     
     tabsContainer.innerHTML = html;
+    
+    // 渲染分类标签后更新下拉菜单
+    updateCategoryDropdown();
 }
 
 // 切换分类
@@ -528,6 +520,60 @@ function switchCategory(category) {
     // 重新渲染卡片
     if (window.cards) {
         renderCards(window.cards);
+    }
+}
+
+// 更新分类下拉菜单
+function updateCategoryDropdown() {
+    const categorySelect = document.getElementById('card-category');
+    if (!categorySelect || !window.cards) return;
+    
+    // 保存当前选中的值
+    const currentValue = categorySelect.value;
+    
+    // 清空现有选项
+    categorySelect.innerHTML = '<option value="">请选择分类</option>';
+    
+    // 添加预设分类
+    const presetCategories = [
+        { value: 'text', text: '文本处理' },
+        { value: 'image', text: '图像生成' },
+        { value: 'voice', text: '语音识别' },
+        { value: 'office', text: '办公软件' }
+    ];
+    
+    presetCategories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat.value;
+        option.textContent = cat.text;
+        categorySelect.appendChild(option);
+    });
+    
+    // 获取所有已存在的分类
+    const existingCategories = new Set();
+    window.cards.forEach(card => {
+        if (card.category && !presetCategories.some(p => p.value === card.category)) {
+            existingCategories.add(card.category);
+        }
+    });
+    
+    // 添加已存在的自定义分类
+    existingCategories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        categorySelect.appendChild(option);
+    });
+    
+    // 添加自定义分类选项
+    const customOption = document.createElement('option');
+    customOption.value = 'custom';
+    customOption.textContent = '自定义分类';
+    categorySelect.appendChild(customOption);
+    
+    // 恢复之前选中的值
+    if (currentValue) {
+        categorySelect.value = currentValue;
     }
 }
 
@@ -661,14 +707,14 @@ function handleImport() {
                     // 导入HTML书签
                     const cards = parseBookmarkHTML(e.target.result);
                     for (const card of cards) {
-                        await saveCard(card.name, card.website, card.category, card.icon);
+                        await saveCard(card.name, card.website, card.category);
                     }
                 } else {
                     // 导入JSON
                     const data = JSON.parse(e.target.result);
                     if (data.cards && Array.isArray(data.cards)) {
                         for (const card of data.cards) {
-                            await saveCard(card.name, card.website, card.category, card.icon);
+                            await saveCard(card.name, card.website, card.category);
                         }
                     }
                 }
@@ -702,8 +748,7 @@ function parseBookmarkHTML(html) {
             cards.push({
                 name,
                 website,
-                category: 'text',
-                icon: '🔗'
+                category: 'text'
             });
         }
     });
@@ -987,10 +1032,6 @@ function applyLayoutSettings(settings) {
     if (container) {
         container.style.gridTemplateColumns = `repeat(${settings.columns}, 1fr)`;
     }
-    
-    document.querySelectorAll('.card-icon').forEach(icon => {
-        icon.style.fontSize = settings.iconSize + '%';
-    });
     
     if (window.cards) {
         renderCards(window.cards);
