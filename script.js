@@ -253,32 +253,52 @@ function renderCards(cards) {
     // 设置网格列数
     aiCardsContainer.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
     
-    // 生成卡片HTML - 只显示卡片名称
+    // 生成卡片HTML
     let html = '';
     filteredCards.forEach(card => {
         const category = card.category || '其他';
         
-        // 管理模式下的复选框和删除按钮
-        const checkboxHtml = isManageMode ? 
-            `<input type="checkbox" class="card-checkbox" data-id="${card.id}" onchange="handleCardCheck(this)" style="margin-right: 4px;">` : '';
+        // 管理模式下的复选框和按钮
+        const checkboxHtml = `<input type="checkbox" class="card-checkbox" data-id="${card.id}" onchange="handleCardCheck(this)" style="margin: 0;">`;
+        const deleteBtnHtml = `<button class="delete-btn" onclick="deleteCard('${card.id}')" style="background: none; border: none; color: #ff4444; cursor: pointer; font-size: 16px; padding: 0;">×</button>`;
+        const editBtnHtml = `<button class="edit-btn" onclick="editCard('${card.id}')" style="background: none; border: none; color: #4CAF50; cursor: pointer; font-size: 16px; padding: 0;">✏️</button>`;
         
-        const deleteBtnHtml = isManageMode ?
-            `<button class="delete-btn" onclick="deleteCard('${card.id}')" style="background: none; border: none; color: #ff4444; cursor: pointer; font-size: 16px; padding: 0 4px;">×</button>` : '';
-        
+        html += `
+            <div class="ai-card" data-id="${card.id}" data-category="${category}" data-website="${card.website}" onclick="handleCardClick('${card.website}')" style="background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(5px); cursor: pointer; height: 60px; display: flex; flex-direction: column; border-radius: 8px; overflow: hidden;">
+                ${isManageMode ? `
+                <div style="display: flex; justify-content: flex-end; gap: 8px; padding: 4px 8px; background: rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.1);">
+                    ${checkboxHtml}
+                    ${editBtnHtml}
+                    ${deleteBtnHtml}
+                </div>
+                ` : ''}
+                <div style="flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: 0 8px;">
+                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${card.name}</span>
+                </div>
+            </div>
+        `;
+    });
+    
+    aiCardsContainer.innerHTML = html;
+}
         // 编辑按钮
         const editBtnHtml = isManageMode ?
             `<button class="edit-btn" onclick="editCard('${card.id}')" style="background: none; border: none; color: #4CAF50; cursor: pointer; font-size: 16px; padding: 0 4px;">✏️</button>` : '';
         
-        html += `
-            <div class="ai-card" data-id="${card.id}" data-category="${category}" data-website="${card.website}" onclick="handleCardClick('${card.website}')" style="background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(5px); cursor: pointer; height: 50px; display: flex; align-items: center; border-radius: 8px; overflow: hidden;">
-                <div class="card-header" style="display: flex; align-items: center; gap: 4px; width: 100%; padding: 0 8px;">
-                    ${checkboxHtml}
-                    ${deleteBtnHtml}
-                    ${editBtnHtml}
-                    <span style="flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${card.name}</span>
-                </div>
-            </div>
-        `;
+html += `
+    <div class="ai-card" data-id="${card.id}" data-category="${category}" data-website="${card.website}" onclick="handleCardClick('${card.website}')" style="background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(5px); cursor: pointer; height: 60px; display: flex; flex-direction: column; border-radius: 8px; overflow: hidden;">
+        ${isManageMode ? `
+        <div style="display: flex; justify-content: flex-end; gap: 8px; padding: 4px 8px; background: rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.1);">
+            ${checkboxHtml}
+            ${editBtnHtml}
+            ${deleteBtnHtml}
+        </div>
+        ` : ''}
+        <div style="flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: 0 8px;">
+            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${card.name}</span>
+        </div>
+    </div>
+`;
     });
     
     aiCardsContainer.innerHTML = html;
