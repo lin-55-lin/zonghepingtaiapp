@@ -281,28 +281,6 @@ function renderCards(cards) {
     
     aiCardsContainer.innerHTML = html;
 }
-        // 编辑按钮
-        const editBtnHtml = isManageMode ?
-            `<button class="edit-btn" onclick="editCard('${card.id}')" style="background: none; border: none; color: #4CAF50; cursor: pointer; font-size: 16px; padding: 0 4px;">✏️</button>` : '';
-        
-html += `
-    <div class="ai-card" data-id="${card.id}" data-category="${category}" data-website="${card.website}" onclick="handleCardClick('${card.website}')" style="background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(5px); cursor: pointer; height: 60px; display: flex; flex-direction: column; border-radius: 8px; overflow: hidden;">
-        ${isManageMode ? `
-        <div style="display: flex; justify-content: flex-end; gap: 8px; padding: 4px 8px; background: rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.1);">
-            ${checkboxHtml}
-            ${editBtnHtml}
-            ${deleteBtnHtml}
-        </div>
-        ` : ''}
-        <div style="flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: 0 8px;">
-            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${card.name}</span>
-        </div>
-    </div>
-`;
-    });
-    
-    aiCardsContainer.innerHTML = html;
-}
 
 // 卡片点击处理 - 直接打开网址
 function handleCardClick(website) {
