@@ -270,17 +270,17 @@ function renderCards(cards) {
         const editBtnHtml = isManageMode ?
             `<button class="edit-btn" onclick="editCard('${card.id}')">✏️</button>` : '';
         
-        html += `
-            <div class="ai-card" data-id="${card.id}" data-category="${category}" data-website="${card.website}" onclick="handleCardClick('${card.website}')" style="background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(5px);">
-                <div class="card-header">
-                    ${checkboxHtml}
-                    ${deleteBtnHtml}
-                    ${editBtnHtml}
-                    <span class="card-icon">${icon}</span>
-                    <h3>${card.name}</h3>
-                </div>
-            </div>
-        `;
+html += `
+    <div class="ai-card" data-id="${card.id}" data-category="${category}" data-website="${card.website}" onclick="handleCardClick('${card.website}')" style="background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(5px); cursor: pointer;">
+        <div class="card-header" style="display: flex; align-items: center; gap: 8px;">
+            ${checkboxHtml}
+            ${deleteBtnHtml}
+            ${editBtnHtml}
+            <span class="card-icon">${icon}</span>
+            <h3 style="margin: 0; flex-grow: 1;">${card.name}</h3>
+        </div>
+    </div>
+`;
     });
     
     aiCardsContainer.innerHTML = html;

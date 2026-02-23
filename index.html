@@ -72,7 +72,7 @@
                 <button id="select-all-btn" class="select-all-btn">全选</button>
                 <button id="wallpaper-btn" class="wallpaper-btn">壁纸</button>
                 <button id="layout-btn" class="layout-btn">布局</button>
-                <button id="sync-btn" class="sync-btn">🔄 同步</button>
+                <button id="sync-btn" class="sync-btn"> 同步</button>
             </div>
         </div>
         
@@ -151,22 +151,22 @@
                     <div class="wallpaper-option" style="margin-top: 20px;">
                         <h4>🎨 纯色壁纸</h4>
                         <div class="color-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 10px;">
-                            <div class="color-option" data-color="#ffffff" style="background-color: #ffffff; width: 100%; aspect-ratio: 1; border-radius: 4px; cursor: pointer; border: 2px solid transparent;"></div>
-                            <div class="color-option" data-color="#f0f0f0" style="background-color: #f0f0f0;"></div>
-                            <div class="color-option" data-color="#e0e0e0" style="background-color: #e0e0e0;"></div>
-                            <div class="color-option" data-color="#d0d0d0" style="background-color: #d0d0d0;"></div>
-                            <div class="color-option" data-color="#c0c0c0" style="background-color: #c0c0c0;"></div>
-                            <div class="color-option" data-color="#a0a0a0" style="background-color: #a0a0a0;"></div>
-                            <div class="color-option" data-color="#808080" style="background-color: #808080;"></div>
-                            <div class="color-option" data-color="#606060" style="background-color: #606060;"></div>
-                            <div class="color-option" data-color="#404040" style="background-color: #404040;"></div>
-                            <div class="color-option" data-color="#202020" style="background-color: #202020;"></div>
-                            <div class="color-option" data-color="#000000" style="background-color: #000000;"></div>
-                            <div class="color-option" data-color="#ff6b6b" style="background-color: #ff6b6b;"></div>
-                            <div class="color-option" data-color="#4ecdc4" style="background-color: #4ecdc4;"></div>
-                            <div class="color-option" data-color="#45b7d1" style="background-color: #45b7d1;"></div>
-                            <div class="color-option" data-color="#96ceb4" style="background-color: #96ceb4;"></div>
-                            <div class="color-option" data-color="#feca57" style="background-color: #feca57;"></div>
+    <div class="color-option" data-color="#ffffff" style="background-color: #ffffff;"></div>
+    <div class="color-option" data-color="#f0f0f0" style="background-color: #f0f0f0;"></div>
+    <div class="color-option" data-color="#e0e0e0" style="background-color: #e0e0e0;"></div>
+    <div class="color-option" data-color="#d0d0d0" style="background-color: #d0d0d0;"></div>
+    <div class="color-option" data-color="#c0c0c0" style="background-color: #c0c0c0;"></div>
+    <div class="color-option" data-color="#a0a0a0" style="background-color: #a0a0a0;"></div>
+    <div class="color-option" data-color="#808080" style="background-color: #808080;"></div>
+    <div class="color-option" data-color="#606060" style="background-color: #606060;"></div>
+    <div class="color-option" data-color="#404040" style="background-color: #404040;"></div>
+    <div class="color-option" data-color="#202020" style="background-color: #202020;"></div>
+    <div class="color-option" data-color="#000000" style="background-color: #000000;"></div>
+    <div class="color-option" data-color="#ff6b6b" style="background-color: #ff6b6b;"></div>
+    <div class="color-option" data-color="#4ecdc4" style="background-color: #4ecdc4;"></div>
+    <div class="color-option" data-color="#45b7d1" style="background-color: #45b7d1;"></div>
+    <div class="color-option" data-color="#96ceb4" style="background-color: #96ceb4;"></div>
+    <div class="color-option" data-color="#feca57" style="background-color: #feca57;"></div>
                         </div>
                     </div>
                 </div>
@@ -495,13 +495,7 @@
                 const customGroup = document.getElementById('custom-category-group');
                 customGroup.style.display = this.value === 'custom' ? 'block' : 'none';
             });
-            
-            // 绑定管理模式按钮
-            document.getElementById('manage-mode-btn').addEventListener('click', function() {
-                const panel = document.getElementById('manage-panel');
-                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-            });
-            
+                        
             // 绑定壁纸按钮
             document.getElementById('wallpaper-btn').addEventListener('click', function() {
                 document.getElementById('wallpaper-modal').style.display = 'flex';
