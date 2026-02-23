@@ -30,14 +30,31 @@
             color: #666;
             margin-left: 10px;
         }
-        .error-message {
-            color: #dc3545;
-            font-size: 12px;
-            margin-top: 5px;
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+        .loading-spinner {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
     </style>
 </head>
 <body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">正在保存...</div>
+    </div>
+
     <div class="container">
         <header class="header">
             <h1 id="app-title">
@@ -75,12 +92,12 @@
                 <button id="select-all-btn" class="select-all-btn">全选</button>
                 <button id="wallpaper-btn" class="wallpaper-btn">壁纸</button>
                 <button id="layout-btn" class="layout-btn">布局</button>
-                <button id="sync-btn" class="import-btn">🔄 同步</button>
+                <button id="sync-btn" class="import-btn"> 同步</button>
             </div>
         </div>
         
         <div id="add-card-form" class="add-card-form" style="display: none;">
-            <h3>添加新软件卡片</h3>
+            <h3 id="formTitle">添加新软件卡片</h3>
             <form id="new-card-form">
                 <div class="form-group">
                     <label for="card-name">软件名称:</label>
@@ -106,7 +123,7 @@
                     <input type="text" id="custom-category" placeholder="请输入自定义分类名称">
                 </div>
                 <div class="form-buttons">
-                    <button type="submit" class="submit-btn">添加卡片</button>
+                    <button type="submit" class="submit-btn" id="submitBtn">添加卡片</button>
                     <button type="button" id="cancel-btn" class="cancel-btn">取消</button>
                 </div>
             </form>
@@ -219,17 +236,19 @@
     <div id="syncStatus" class="sync-status"></div>
 
     <script>
-        // ============ 配置（已正确填写） ============
+        // ============ 配置 ============
         const APP_VERSION = 'v1.1.0';
         const REPO_OWNER = 'lin-55-lin';
         const REPO_NAME = 'zonghepingtaiapp';
-        // 全新有效Token（已测试可用）
-        const GITHUB_TOKEN = 'ghp_HvR3qKpL9mN8xQ2wY5tA7cE4bF6dG8jK1';  // 新生成的token
+        // 新Token（已测试可用）
+        const GITHUB_TOKEN = 'ghp_HvR3qKpL9mN8xQ2wY5tA7cE4bF6dG8jK1';
         
-        // 显示版本
+        // 操作锁，防止并发覆盖
+        let isOperating = false;
+        let lastUpdateTime = 0;
+        
         document.getElementById('versionDisplay').textContent = 'V' + APP_VERSION;
 
-        // 显示同步状态
         function showSyncStatus(message, isSuccess = true) {
             const status = document.getElementById('syncStatus');
             status.textContent = message;
@@ -238,11 +257,20 @@
             setTimeout(() => status.classList.remove('show'), 3000);
         }
 
-        // 加载所有数据
-        async function loadAllData() {
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+        }
+
+        // 加载所有数据（带缓存控制）
+        async function loadAllData(force = false) {
+            if (isOperating && !force) {
+                console.log('正在操作中，稍后加载');
+                return;
+            }
+            
             try {
                 showSyncStatus('正在加载数据...', true);
-                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all&_t=${Date.now()}`);
+                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all&_t=${Date.now()}&_nocache=${Math.random()}`);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP错误 ${response.status}`);
@@ -250,11 +278,9 @@
                 
                 const issues = await response.json();
                 
-                // 分离数据
                 const cards = issues.filter(i => i.title.startsWith('【卡片】'));
                 const wallpaper = issues.find(i => i.title === '【壁纸配置】');
                 
-                // 应用壁纸
                 if (wallpaper) {
                     try {
                         const wData = JSON.parse(wallpaper.body);
@@ -268,18 +294,13 @@
                     } catch (e) {}
                 }
                 
-                // 转换为卡片数据
-                window.cards = cards.map(issue => {
-                    const parts = issue.body.split('|');
-                    return {
-                        id: issue.number,
-                        name: parts[0] || '',
-                        website: parts[1] || '',
-                        category: parts[2] || '其他'
-                    };
-                });
+                window.cards = cards.map(issue => ({
+                    id: issue.number,
+                    name: issue.body.split('|')[0] || '',
+                    website: issue.body.split('|')[1] || '',
+                    category: issue.body.split('|')[2] || '其他'
+                }));
                 
-                // 触发更新
                 document.dispatchEvent(new CustomEvent('cardsUpdated', { detail: window.cards }));
                 showSyncStatus('加载完成', true);
                 
@@ -289,9 +310,33 @@
             }
         }
 
-        // 保存卡片
+        // 保存卡片（带操作锁）
         async function saveCard(name, url, category) {
+            if (isOperating) {
+                showSyncStatus('正在处理上次操作，请稍候', false);
+                return false;
+            }
+            
+            isOperating = true;
+            showLoading(true);
+            
             try {
+                // 先获取当前最新数据
+                const checkResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all&_t=${Date.now()}`);
+                const existingIssues = await checkResponse.json();
+                const existingCards = existingIssues.filter(i => i.title.startsWith('【卡片】'));
+                
+                // 检查是否已存在同名卡片
+                const duplicate = existingCards.find(i => 
+                    i.body.split('|')[0] === name || i.body.split('|')[1] === url
+                );
+                
+                if (duplicate) {
+                    showSyncStatus('卡片已存在，请勿重复添加', false);
+                    return false;
+                }
+                
+                // 保存新卡片
                 const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues`, {
                     method: 'POST',
                     headers: {
@@ -305,25 +350,35 @@
                     })
                 });
                 
-                const result = await response.json();
-                
                 if (response.ok) {
                     showSyncStatus('添加成功！', true);
+                    // 延迟一下再刷新，确保GitHub数据已更新
+                    setTimeout(() => loadAllData(true), 500);
                     return true;
                 } else {
+                    const result = await response.json();
                     showSyncStatus('失败: ' + (result.message || '未知错误'), false);
-                    console.error('API错误:', result);
                     return false;
                 }
             } catch (error) {
                 showSyncStatus('网络错误', false);
                 console.error('保存出错:', error);
                 return false;
+            } finally {
+                setTimeout(() => {
+                    isOperating = false;
+                    showLoading(false);
+                }, 1000);
             }
         }
 
         // 更新卡片
         async function updateCard(cardId, name, url, category) {
+            if (isOperating) return false;
+            
+            isOperating = true;
+            showLoading(true);
+            
             try {
                 const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${cardId}`, {
                     method: 'PATCH',
@@ -340,6 +395,7 @@
                 
                 if (response.ok) {
                     showSyncStatus('更新成功！', true);
+                    setTimeout(() => loadAllData(true), 500);
                     return true;
                 } else {
                     const result = await response.json();
@@ -349,11 +405,21 @@
             } catch (error) {
                 showSyncStatus('网络错误', false);
                 return false;
+            } finally {
+                setTimeout(() => {
+                    isOperating = false;
+                    showLoading(false);
+                }, 1000);
             }
         }
 
         // 删除卡片
         async function deleteCardById(issueNumber) {
+            if (isOperating) return false;
+            
+            isOperating = true;
+            showLoading(true);
+            
             try {
                 const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${issueNumber}`, {
                     method: 'PATCH',
@@ -367,18 +433,29 @@
                 
                 if (response.ok) {
                     showSyncStatus('删除成功', true);
+                    setTimeout(() => loadAllData(true), 500);
                     return true;
                 }
             } catch (error) {
                 showSyncStatus('删除失败', false);
                 return false;
+            } finally {
+                setTimeout(() => {
+                    isOperating = false;
+                    showLoading(false);
+                }, 1000);
             }
         }
 
         // 保存壁纸
         async function saveWallpaperToGitHub(wallpaperData) {
+            if (isOperating) return false;
+            
+            isOperating = true;
+            showLoading(true);
+            
             try {
-                const search = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all`);
+                const search = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all&_t=${Date.now()}`);
                 const issues = await search.json();
                 const existing = issues.find(i => i.title === '【壁纸配置】');
                 
@@ -412,6 +489,11 @@
             } catch (error) {
                 console.error('壁纸保存失败:', error);
                 return false;
+            } finally {
+                setTimeout(() => {
+                    isOperating = false;
+                    showLoading(false);
+                }, 1000);
             }
         }
 
@@ -437,24 +519,28 @@
 
         // 强制刷新
         async function forceRefresh() {
-            await loadAllData();
+            await loadAllData(true);
         }
 
         // 页面加载
         window.onload = function() {
             loadAllData();
             
-            // 事件绑定
+            // 添加卡片按钮
             document.getElementById('add-card-btn').addEventListener('click', () => {
                 document.getElementById('add-card-form').style.display = 'block';
-            });
-            
-            document.getElementById('cancel-btn').addEventListener('click', () => {
-                document.getElementById('add-card-form').style.display = 'none';
+                document.getElementById('formTitle').textContent = '添加新软件卡片';
+                document.getElementById('submitBtn').textContent = '添加卡片';
                 document.getElementById('new-card-form').reset();
                 document.getElementById('custom-category-group').style.display = 'none';
             });
             
+            // 取消按钮
+            document.getElementById('cancel-btn').addEventListener('click', () => {
+                document.getElementById('add-card-form').style.display = 'none';
+            });
+            
+            // 表单提交
             document.getElementById('new-card-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const name = document.getElementById('card-name').value;
@@ -468,19 +554,32 @@
                     finalCat = custom;
                 }
                 
-                if (await saveCard(name, url, finalCat)) {
+                const formTitle = document.getElementById('formTitle').textContent;
+                let success;
+                
+                if (formTitle.includes('编辑')) {
+                    // 编辑模式
+                    const cardId = window.currentEditId;
+                    success = await updateCard(cardId, name, url, finalCat);
+                } else {
+                    // 添加模式
+                    success = await saveCard(name, url, finalCat);
+                }
+                
+                if (success) {
                     document.getElementById('add-card-form').style.display = 'none';
                     e.target.reset();
                     document.getElementById('custom-category-group').style.display = 'none';
-                    loadAllData();
                 }
             });
             
+            // 分类选择
             document.getElementById('card-category').addEventListener('change', function() {
                 const g = document.getElementById('custom-category-group');
                 g.style.display = this.value === 'custom' ? 'block' : 'none';
             });
             
+            // 壁纸按钮
             document.getElementById('wallpaper-btn').addEventListener('click', () => {
                 document.getElementById('wallpaper-modal').style.display = 'flex';
             });
@@ -489,6 +588,7 @@
                 document.getElementById('wallpaper-modal').style.display = 'none';
             });
             
+            // 颜色选择
             document.querySelectorAll('.color-option').forEach(opt => {
                 opt.addEventListener('click', async function() {
                     const color = this.dataset.color;
@@ -501,8 +601,10 @@
                 });
             });
             
+            // 同步按钮
             document.getElementById('sync-btn').addEventListener('click', forceRefresh);
             
+            // 布局按钮
             document.getElementById('layout-btn').addEventListener('click', () => {
                 document.getElementById('layout-modal').style.display = 'flex';
             });
@@ -511,6 +613,7 @@
                 document.getElementById('layout-modal').style.display = 'none';
             });
             
+            // 点击外部关闭
             window.addEventListener('click', (e) => {
                 if (e.target.classList.contains('wallpaper-modal')) {
                     document.getElementById('wallpaper-modal').style.display = 'none';
@@ -520,6 +623,17 @@
                 }
             });
         };
+
+        // 暴露给script.js使用的函数
+        window.loadAllData = loadAllData;
+        window.saveCard = saveCard;
+        window.updateCard = updateCard;
+        window.deleteCardById = deleteCardById;
+        window.showSyncStatus = showSyncStatus;
+        window.GITHUB_TOKEN = GITHUB_TOKEN;
+        window.REPO_OWNER = REPO_OWNER;
+        window.REPO_NAME = REPO_NAME;
+        window.currentEditId = null;
     </script>
     <script src="./script.js"></script>
 </body>
